@@ -1,4 +1,3 @@
 package com.harris.usmob.dto;
 
-public class CycleDTO {
-}
+import lombok.AllArgsCon

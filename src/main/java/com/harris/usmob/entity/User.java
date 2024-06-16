@@ -1,4 +1,3 @@
 package com.harris.usmob.entity;
 
-public class User {
-}
+import lombok.Data;

@@ -1,4 +1,3 @@
 package com.harris.usmob.dto;
 
-public class UserDTO {
-}
+import lombok.AllArgsCo

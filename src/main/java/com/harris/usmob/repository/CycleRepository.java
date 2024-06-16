@@ -1,4 +1,3 @@
 package com.harris.usmob.repository;
 
-public interface CycleRepository {
-}
+import com.harris.usmob.entity.Cycl

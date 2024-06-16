@@ -1,4 +1,3 @@
 package com.harris.usmob.dto;
 
-public class DailyUsageDTO {
-}
+import lombok.AllArgsConstruc

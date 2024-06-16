@@ -1,4 +1,3 @@
 package com.harris.usmob.error;
 
-public class ErrorResponse {
-}
+import lombok.AllArgsConstruc

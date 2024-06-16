@@ -1,4 +1,3 @@
 package com.harris.usmob.repository;
 
-public interface UserRepository {
-}
+import com.harris.usmob.entity.Use
