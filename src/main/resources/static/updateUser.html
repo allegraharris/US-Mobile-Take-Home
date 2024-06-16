@@ -5,4 +5,50 @@
     <title>Update User</title>
 </head>
 <body>
-<h1>Update
+<h1>Update User</h1>
+<form id="updateUserForm">
+    <label for="userId">User ID:</label><br>
+    <input type="text" id="userId" name="userId" required><br><br>
+    <label for="firstName">First Name:</label><br>
+    <input type="text" id="firstName" name="firstName" required><br><br>
+    <label for="lastName">Last Name:</label><br>
+    <input type="text" id="lastName" name="lastName" required><br><br>
+    <label for="email">Email:</label><br>
+    <input type="email" id="email" name="email" required><br><br>
+    <input type="button" value="Submit" onclick="submitForm()">
+</form>
+
+<div id="response"></div>
+
+<br><a href="/home">Return to Home</a>
+
+<script>
+    function submitForm() {
+        const userId = document.getElementById('userId').value;
+        const data = {
+            firstName: document.getElementById('firstName').value,
+            lastName: document.getElementById('lastName').value,
+            email: document.getElementById('email').value
+        };
+
+        fetch(`/api/user/update/${userId}`, {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json'
+            },
+            body: JSON.stringify(data)
+        })
+            .then(response => response.json())
+            .then(data => {
+                document.getElementById('response').innerText = JSON.stringify(data, null, 2);
+                alert('User updated successfully!');
+            })
+            .catch(error => {
+                console.error('Error:', error);
+                document.getElementById('response').innerText = 'An error occurred while updating the user.';
+                alert('Error updating user!');
+            });
+    }
+</script>
+</body>
+</html>

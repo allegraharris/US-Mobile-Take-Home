@@ -5,4 +5,43 @@
     <title>Get Cycle History</title>
 </head>
 <body>
-<h1>Get
+<h1>Get Cycle History</h1>
+<form id="getCycleHistoryForm">
+    <label for="userId">User ID:</label><br>
+    <input type="text" id="userId" name="userId" required><br><br>
+
+    <label for="mdn">MDN (Phone Number):</label>
+    <input type="text" id="mdn" name="mdn" required><br><br>
+
+    <input type="button" value="Get Cycle History" onclick="submitForm()">
+</form>
+
+<div id="response"></div>
+
+<br><a href="/home">Return to Home</a>
+
+<script>
+    function submitForm() {
+        const userId = document.getElementById('userId').value;
+        const mdn = document.getElementById('mdn').value;
+
+        fetch(`/api/cycle/cycle-history/${userId}/${mdn}`,
+            {
+                method: 'GET',
+                headers: {
+                    'Content-Type': 'application/json'
+                }
+            })
+            .then(response => response.json())
+            .then(data => {
+                document.getElementById('response').innerText = JSON.stringify(data, null, 2);
+                alert('Cycle retrieved successfully!');
+            })
+            .catch(error => {
+                console.error('Error:', error);
+                document.getElementById('response').innerText = 'No cycle history found for the given user and mdn.';
+            });
+    }
+</script>
+</body>
+</html>

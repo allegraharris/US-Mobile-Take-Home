@@ -5,4 +5,37 @@
     <title>Search User by Email</title>
 </head>
 <body>
-<
+<h1>Search User</h1>
+<form id="searchUserForm">
+    <label for="email">Email Address:</label><br>
+    <input type="email" id="email" name="email" required><br><br>
+    <input type="button" value="Search" onclick="submitForm()">
+</form>
+
+<div id="response"></div>
+
+<br><a href="/home">Return to Home</a>
+
+<script>
+    function submitForm() {
+        const email = document.getElementById('email').value;
+
+        fetch(`/api/user/search/${email}`, {
+            method: 'GET',
+            headers: {
+                'Content-Type': 'application/json'
+            }
+        })
+            .then(response => response.json())
+            .then(data => {
+                document.getElementById('response').innerText = JSON.stringify(data, null, 2);
+                alert(`User found: ${JSON.stringify(data)}`);
+            })
+            .catch(error => {
+                console.error('Error:', error);
+                document.getElementById('response').innerText = 'An error occurred while searching the user.';
+            });
+    }
+</script>
+</body>
+</html>
