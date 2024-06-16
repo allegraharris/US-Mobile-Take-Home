@@ -2,18 +2,18 @@
 <html lang="en">
 <head>
     <meta charset="UTF-8">
-    <title>Get Cycle History</title>
+    <title>Get Current Cycle Daily Usage</title>
 </head>
 <body>
-<h1>Get Cycle History</h1>
-<form id="getCycleHistoryForm">
+<h1>Get Current Cycle Daily Usage </h1>
+<form id="getCurrCycleUsageForm">
     <label for="userId">User ID:</label><br>
     <input type="text" id="userId" name="userId" required><br><br>
 
     <label for="mdn">MDN (Phone Number):</label>
     <input type="tel" id="mdn" name="mdn" required><br><br>
 
-    <button type="submit">Get Cycle History</button>
+    <button type="submit">Get Current Cycle Daily Usage</button>
 </form>
 
 <div id="response"></div>
@@ -21,12 +21,12 @@
 <br><a href="/home">Return to Home</a>
 
 <script>
-    document.getElementById('getCycleHistoryForm').addEventListener('submit', function(event) {
+    document.getElementById('getCurrCycleUsageForm').addEventListener('submit', function(event) {
         event.preventDefault();
         const userId = document.getElementById('userId').value;
         const mdn = document.getElementById('mdn').value;
 
-        fetch(`/api/cycle/history/${userId}/${mdn}`,
+        fetch(`/api/daily-usage/history/${userId}/${mdn}`,
             {
                 method: 'GET',
                 headers: {
@@ -41,12 +41,12 @@
             })
             .then(data => {
                 document.getElementById('response').innerText = JSON.stringify(data, null, 2);
-                document.getElementById('getCycleHistoryForm').reset();
+                document.getElementById('getCurrCycleUsageForm').reset();
             })
             .catch(error => {
                 console.error('Error:', error);
                 document.getElementById('response').innerText = `${error.message}`;
-                document.getElementById('getCycleHistoryForm').reset();
+                document.getElementById('getCurrCycleUsageForm').reset();
             });
     });
 </script>

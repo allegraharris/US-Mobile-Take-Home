@@ -11,28 +11,49 @@ public class ViewController {
         return "forward:/homeScreen.html";
     }
 
-    @GetMapping("/create")
+    @GetMapping("/user/create")
     public String createUser() {
         return "forward:/createUser.html";
     }
 
-    @GetMapping("/update")
+    @GetMapping("/user/update")
     public String updateUser() {
         return "forward:/updateUser.html";
     }
 
-    @GetMapping("/search")
+    @GetMapping("/user/search")
     public String searchUser() {
         return "forward:/searchByEmail.html";
     }
 
-    @GetMapping("/cycle")
+    @GetMapping("/user/all")
+    public String allUsers() {
+        return "forward:/getAllUsers.html";
+    }
+
+    @GetMapping("/cycle/history")
     public String cycle() {
         return "forward:/cycleHistory.html";
     }
 
-    @GetMapping("/create-cycle")
+    @GetMapping("/cycle/add")
     public String createCycle() {
         return "forward:/addCycle.html";
     }
+
+    @GetMapping("/cycle/all")
+    public String allCycles() { return "forward:/getAllCycles.html";}
+
+    @GetMapping("/daily-usage/add")
+    public String addDailyUsage() {
+        return "forward:/addDailyUsage.html";
+    }
+
+    @GetMapping("/daily-usage/history")
+    public String dailyUsage() {
+        return "forward:/dailyUsageHistory.html";
+    }
+
+    @GetMapping("/daily-usage/all")
+    public String allDailyUsages() { return "forward:/getAllDailyUsages.html";}
 }

@@ -2,7 +2,6 @@ package com.harris.usmob.controller;
 
 import com.harris.usmob.dto.UserDTO;
 import com.harris.usmob.entity.User;
-import com.harris.usmob.error.ErrorResponse;
 import com.harris.usmob.service.UserService;
 import lombok.AllArgsConstructor;
 import org.springframework.http.HttpStatus;
@@ -19,9 +18,14 @@ public class UserController {
 
     private final UserService userService;
 
-    @GetMapping
-    public List<UserDTO> getUsers() {
-        return userService.getAllUsers();
+    @GetMapping("/all")
+    public ResponseEntity<Object> getUsers() {
+        List<UserDTO> u = userService.getAllUsers();
+
+        if(u.isEmpty()) {
+            return new ResponseEntity<>("No users found.", HttpStatus.NOT_FOUND);
+        }
+        return new ResponseEntity<>(u, HttpStatus.OK);
     }
 
     @PostMapping("/create")
@@ -29,8 +33,7 @@ public class UserController {
         UserDTO u = userService.createUser(user);
 
         if (u == null) {
-            ErrorResponse errorResponse = new ErrorResponse("Email is already in use. Please try again.");
-            return new ResponseEntity<>(errorResponse, HttpStatus.CONFLICT);
+            return new ResponseEntity<>("Email is already in use.", HttpStatus.CONFLICT);
         }
 
         return new ResponseEntity<>(u, HttpStatus.CREATED);
@@ -41,9 +44,9 @@ public class UserController {
         Optional<UserDTO> u = userService.updateUser(userId, user);
 
         if (u.isEmpty()) {
-            ErrorResponse errorResponse = new ErrorResponse("User does not exist or new email is already in use. Please try again.");
-            return new ResponseEntity<>(errorResponse, HttpStatus.CONFLICT);
+            return new ResponseEntity<>("User does not exist or new email is already in use.", HttpStatus.CONFLICT);
         }
+
         return new ResponseEntity<>(u.get(), HttpStatus.OK);
     }
 
@@ -52,8 +55,7 @@ public class UserController {
         Optional<UserDTO> u = userService.getUserByEmail(email);
 
         if (u.isEmpty()) {
-            ErrorResponse errorResponse = new ErrorResponse("User does not exist.");
-            return new ResponseEntity<>(errorResponse, HttpStatus.NOT_FOUND);
+            return new ResponseEntity<>("User does not exist.", HttpStatus.NOT_FOUND);
         }
         return new ResponseEntity<>(u.get(), HttpStatus.OK);
     }

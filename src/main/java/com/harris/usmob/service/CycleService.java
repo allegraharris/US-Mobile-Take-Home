@@ -8,8 +8,7 @@ import com.harris.usmob.repository.UserRepository;
 import lombok.AllArgsConstructor;
 import org.springframework.stereotype.Service;
 
-import java.util.List;
-import java.util.Optional;
+import java.util.*;
 import java.util.stream.Collectors;
 
 @AllArgsConstructor
@@ -34,10 +33,18 @@ public class CycleService {
 
         List<Cycle> oldCycles = cycleRepository.findByUserId(cycle.getUserId());
 
-        for (Cycle oldCycle : oldCycles) {
-            // Check if cycle already exists
-            if (oldCycle.getStartDate().equals(cycle.getStartDate()) && oldCycle.getEndDate().equals(cycle.getEndDate()) && oldCycle.getMdn().equals(cycle.getMdn())) {
+        if(!oldCycles.isEmpty()) {
+
+            //Check if mdn is different
+            if(!Objects.equals(cycle.getMdn(), oldCycles.getFirst().getMdn())) {
                 return null;
+            }
+
+            for (Cycle oldCycle : oldCycles) {
+                // Check if cycle already exists
+                if (oldCycle.getStartDate().equals(cycle.getStartDate()) && oldCycle.getEndDate().equals(cycle.getEndDate()) && oldCycle.getMdn().equals(cycle.getMdn())) {
+                    return null;
+                }
             }
         }
 
@@ -55,6 +62,30 @@ public class CycleService {
         return cycles.stream()
                 .map(cycle -> new CycleDTO(cycle.getId(), cycle.getStartDate(), cycle.getEndDate(), cycle.getUserId(), cycle.getMdn()))
                 .collect(Collectors.toList());
+    }
+
+    public List<Date> getMostRecentCycle(String userId, String mdn) {
+        List<Cycle> cycles = cycleRepository.findByUserIdAndMdn(userId, mdn);
+
+        if (cycles.isEmpty()) {
+            return null;
+        }
+
+        Date latestEndDate = null;
+        Date latestStartDate = null;
+
+        for (Cycle cycle : cycles) {
+            if (latestEndDate == null || cycle.getEndDate().after(latestEndDate)) {
+                latestEndDate = cycle.getEndDate();
+                latestStartDate = cycle.getStartDate();
+            }
+        }
+
+        List<Date> mostRecentCycle = new ArrayList<>();
+        mostRecentCycle.add(latestStartDate);
+        mostRecentCycle.add(latestEndDate);
+
+        return mostRecentCycle;
     }
 }
 

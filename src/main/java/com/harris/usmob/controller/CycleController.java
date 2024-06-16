@@ -17,7 +17,7 @@ public class CycleController {
 
     private final CycleService cycleService;
 
-    @GetMapping("/cycle-history/{userId}/{mdn}")
+    @GetMapping("/history/{userId}/{mdn}")
     public ResponseEntity<Object> getCycleHistory(@PathVariable String userId, @PathVariable String mdn) {
         List<CycleDTO> cycleHistory = cycleService.getCycleHistory(userId, mdn);
 
@@ -49,4 +49,5 @@ public class CycleController {
 
         return new ResponseEntity<>(cycles, HttpStatus.OK);
     }
+
 }

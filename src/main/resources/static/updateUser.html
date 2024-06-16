@@ -15,7 +15,8 @@
     <input type="text" id="lastName" name="lastName" required><br><br>
     <label for="email">Email:</label><br>
     <input type="email" id="email" name="email" required><br><br>
-    <input type="button" value="Submit" onclick="submitForm()">
+
+    <button type="submit">Search</button>
 </form>
 
 <div id="response"></div>
@@ -23,7 +24,8 @@
 <br><a href="/home">Return to Home</a>
 
 <script>
-    function submitForm() {
+    document.getElementById('updateUserForm').addEventListener('submit', function(event) {
+        event.preventDefault();
         const userId = document.getElementById('userId').value;
         const data = {
             firstName: document.getElementById('firstName').value,
@@ -38,17 +40,22 @@
             },
             body: JSON.stringify(data)
         })
-            .then(response => response.json())
+            .then(response => {
+                if (!response.ok) {
+                    return response.text().then(text => { throw new Error(text); });
+                }
+                return response.json();
+            })
             .then(data => {
                 document.getElementById('response').innerText = JSON.stringify(data, null, 2);
-                alert('User updated successfully!');
+                document.getElementById('updateUserForm').reset();
             })
             .catch(error => {
                 console.error('Error:', error);
-                document.getElementById('response').innerText = 'An error occurred while updating the user.';
-                alert('Error updating user!');
+                document.getElementById('response').innerText = `${error.message}`;
+                document.getElementById('updateUserForm').reset();
             });
-    }
+    });
 </script>
 </body>
 </html>

@@ -2,26 +2,22 @@
 <html lang="en">
 <head>
     <meta charset="UTF-8">
-    <title>Search User by Email</title>
+    <title>See All Cycles</title>
 </head>
 <body>
-<h1>Search User</h1>
-<form id="searchUserForm">
-    <label for="email">Email Address:</label><br>
-    <input type="email" id="email" name="email" required><br><br>
-    <button type="submit">Search</button>
-</form>
+<h1>See All Cycles</h1>
+
+<button id="getAllCyclesButton">See All Cycles</button>
 
 <div id="response"></div>
 
 <br><a href="/home">Return to Home</a>
 
 <script>
-    document.getElementById('searchUserForm').addEventListener('submit', function(event) {
+    document.getElementById('getAllCyclesButton').addEventListener('click', function(event) {
         event.preventDefault();
-        const email = document.getElementById('email').value;
 
-        fetch(`/api/user/search/${email}`, {
+        fetch('/api/cycle/all', {
             method: 'GET',
             headers: {
                 'Content-Type': 'application/json'
@@ -35,12 +31,10 @@
             })
             .then(data => {
                 document.getElementById('response').innerText = JSON.stringify(data, null, 2);
-                document.getElementById('searchUserForm').reset();
             })
             .catch(error => {
                 console.error('Error:', error);
                 document.getElementById('response').innerText = `${error.message}`;
-                document.getElementById('searchUserForm').reset();
             });
     });
 </script>

@@ -3,24 +3,24 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Create Cycle</title>
+    <title>Add Daily Usage</title>
 </head>
 <body>
-<h1>Create Cycle</h1>
-<form id="addCycleForm">
+<h1>Add Daily Usage</h1>
+<form id="addDailyUsageForm">
     <label for="mdn">MDN (Phone Number):</label>
     <input type="tel" id="mdn" name="mdn" required><br><br>
-
-    <label for="startDate">Start Date:</label>
-    <input type="date" id="startDate" name="startDate" required><br><br>
-
-    <label for="endDate">End Date:</label>
-    <input type="date" id="endDate" name="endDate" required><br><br>
 
     <label for="userId">User ID:</label>
     <input type="text" id="userId" name="userId" required><br><br>
 
-    <button type="submit">Add Cycle</button>
+    <label for="usageDate">Usage Date:</label>
+    <input type="date" id="usageDate" name="usageDate" required><br><br>
+
+    <label for="usedInMb">Usage in mb:</label>
+    <input type="number" id="usedInMb" name="usedInMb" required><br><br>
+
+    <button type="submit">Add Daily Usage</button>
 </form>
 
 <div id="response"></div>
@@ -28,27 +28,27 @@
 <br><a href="/home">Return to Home</a>
 
 <script>
-    document.getElementById('addCycleForm').addEventListener('submit', function(event) {
+    document.getElementById('addDailyUsageForm').addEventListener('submit', function(event) {
         event.preventDefault();
 
         const mdn = document.getElementById('mdn').value;
-        const startDate = document.getElementById('startDate').value;
-        const endDate = document.getElementById('endDate').value;
         const userId = document.getElementById('userId').value;
+        const usageDate = document.getElementById('usageDate').value;
+        const usedInMb = document.getElementById('usedInMb').value;
 
-        const cycle = {
+        const dailyUsage = {
             mdn: mdn,
-            startDate: startDate,
-            endDate: endDate,
-            userId: userId
+            userId: userId,
+            usageDate: usageDate,
+            usedInMb: usedInMb
         };
 
-        fetch('/api/cycle/add', {
+        fetch('/api/daily-usage/add', {
             method: 'POST',
             headers: {
                 'Content-Type': 'application/json'
             },
-            body: JSON.stringify(cycle)
+            body: JSON.stringify(dailyUsage)
         })
             .then(response => {
                 if (!response.ok) {
@@ -58,12 +58,12 @@
             })
             .then(data => {
                 document.getElementById('response').innerText = JSON.stringify(data, null, 2);
-                document.getElementById('addCycleForm').reset();
+                document.getElementById('addDailyUsageForm').reset();
             })
             .catch(error => {
                 console.error('Error:', error);
                 document.getElementById('response').innerText = `${error.message}`;
-                document.getElementById('addCycleForm').reset();
+                document.getElementById('addDailyUsageForm').reset();
             });
     });
 </script>
