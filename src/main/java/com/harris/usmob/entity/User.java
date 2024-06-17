@@ -19,12 +19,4 @@ public class User {
     private String lastName; // last name of a customer
     private String email; // email of a customer
     private String password; // used for login to our system
-
-//    public User(String firstName, String lastName, String mdn, String email, String password) {
-//        this.firstName = firstName;
-//        this.lastName = lastName;
-//        this.mdn = mdn;
-//        this.email = email;
-//        this.password = password;
-//    }
 }

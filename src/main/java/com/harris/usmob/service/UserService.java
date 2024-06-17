@@ -15,9 +15,9 @@ import java.util.stream.Collectors;
 @AllArgsConstructor
 @Service
 public class UserService {
-    private final UserRepository userRepository;
     private final CycleRepository cycleRepository;
     private final DailyUsageRepository dailyUsageRepository;
+    private final UserRepository userRepository;
 
     public UserDTO createUser(User user) {
         if (userRepository.findByEmail(user.getEmail()) != null) {
@@ -25,6 +25,39 @@ public class UserService {
         }
         User savedUser = userRepository.save(user);
         return new UserDTO(savedUser.getId(), savedUser.getMdn(), savedUser.getFirstName(), savedUser.getLastName(), savedUser.getEmail());
+    }
+
+    public Boolean deleteUser(String mdn) {
+        User user = userRepository.findByMdn(mdn);
+
+        if (user == null) {
+            return false;
+        }
+
+        userRepository.deleteByMdn(mdn);
+
+        // Delete references to this user in other tables
+        cycleRepository.deleteByUserId(user.getId());
+        dailyUsageRepository.deleteByUserId(user.getId());
+
+        return true;
+    }
+
+    public List<UserDTO> getAllUsers() {
+        List<User> allUsers = userRepository.findAll();
+
+        return allUsers.stream()
+                .map(user -> new UserDTO(user.getId(), user.getMdn(), user.getFirstName(), user.getLastName(), user.getEmail()))
+                .collect(Collectors.toList());
+    }
+
+    public Optional<UserDTO> getUserByEmail(String email) {
+        User user = userRepository.findByEmail(email);
+
+        if (user == null) {
+            return Optional.empty();
+        }
+        return Optional.of(new UserDTO(user.getId(), user.getMdn(), user.getFirstName(), user.getLastName(), user.getEmail()));
     }
 
     public Optional<UserDTO> updateUser(String userId, User user) {
@@ -49,36 +82,5 @@ public class UserService {
             return Optional.of(new UserDTO(savedUser.getId(), savedUser.getMdn(), savedUser.getFirstName(), savedUser.getLastName(), savedUser.getEmail()));
         }
         return Optional.empty();
-    }
-
-    public List<UserDTO> getAllUsers() {
-        List<User> allUsers = userRepository.findAll();
-
-        return allUsers.stream()
-                .map(user -> new UserDTO(user.getId(), user.getMdn(), user.getFirstName(), user.getLastName(), user.getEmail()))
-                .collect(Collectors.toList());
-    }
-
-    public Optional<UserDTO> getUserByEmail(String email) {
-        User user = userRepository.findByEmail(email);
-
-        if (user == null) {
-            return Optional.empty();
-        }
-        return Optional.of(new UserDTO(user.getId(), user.getMdn(), user.getFirstName(), user.getLastName(), user.getEmail()));
-    }
-
-    public Boolean deleteUser(String mdn) {
-        User user = userRepository.findByMdn(mdn);
-
-        if(user == null) { return false; }
-
-        userRepository.deleteByMdn(mdn);
-
-        // Delete references to this user in other tables
-        cycleRepository.deleteByUserId(user.getId());
-        dailyUsageRepository.deleteByUserId(user.getId());
-
-        return true;
     }
 }

@@ -18,35 +18,28 @@ public class CycleService {
     private final CycleRepository cycleRepository;
     private final UserRepository userRepository;
 
-    public List<CycleDTO> getCycleHistory(String userId, String mdn) {
-        List<Cycle> cycles = cycleRepository.findByUserIdAndMdn(userId, mdn);
-        return cycles.stream()
-                .map(cycle -> new CycleDTO(cycle.getId(), cycle.getStartDate(), cycle.getEndDate(), cycle.getUserId(), cycle.getMdn()))
-                .collect(Collectors.toList());
-    }
-
     public CycleDTO addCycle(Cycle cycle) {
         String userId = cycle.getUserId();
         String mdn = cycle.getMdn();
 
         //Foreign key error
-        if(!idExists(userId)) {
+        if (!idExists(userId)) {
             return null;
         }
 
         Date startDate = cycle.getStartDate();
         Date endDate = cycle.getEndDate();
 
-        if(startDate.after(endDate)) {
+        if (startDate.after(endDate)) {
             return null;
         }
 
         List<Cycle> oldCycles = cycleRepository.findByUserId(userId);
 
-        if(!oldCycles.isEmpty()) {
+        if (!oldCycles.isEmpty()) {
 
             //Check if mdn is different
-            if(!Objects.equals(mdn, oldCycles.getFirst().getMdn())) {
+            if (!Objects.equals(mdn, oldCycles.getFirst().getMdn())) {
                 return null;
             }
 
@@ -54,7 +47,7 @@ public class CycleService {
 
                 // Cycle overlaps with any previous cycle
                 // Check logic on this
-                if(afterOrEquals(startDate, oldCycle.getStartDate()) && beforeOrEquals(startDate, oldCycle.getEndDate())) {
+                if (afterOrEquals(startDate, oldCycle.getStartDate()) && beforeOrEquals(startDate, oldCycle.getEndDate())) {
                     return null;
                 }
 
@@ -69,13 +62,23 @@ public class CycleService {
         return new CycleDTO(savedCycle.getId(), savedCycle.getStartDate(), savedCycle.getEndDate(), savedCycle.getUserId(), savedCycle.getMdn());
     }
 
-    private Boolean idExists(String userId) {
-        Optional<User> user = userRepository.findById(userId);
-        return user.isPresent();
+    private Boolean afterOrEquals(Date date1, Date date2) {
+        return date1.after(date2) || date1.equals(date2);
+    }
+
+    private Boolean beforeOrEquals(Date date1, Date date2) {
+        return date1.before(date2) || date1.equals(date2);
     }
 
     public List<CycleDTO> getAllCycles() {
         List<Cycle> cycles = cycleRepository.findAll();
+        return cycles.stream()
+                .map(cycle -> new CycleDTO(cycle.getId(), cycle.getStartDate(), cycle.getEndDate(), cycle.getUserId(), cycle.getMdn()))
+                .collect(Collectors.toList());
+    }
+
+    public List<CycleDTO> getCycleHistory(String userId, String mdn) {
+        List<Cycle> cycles = cycleRepository.findByUserIdAndMdn(userId, mdn);
         return cycles.stream()
                 .map(cycle -> new CycleDTO(cycle.getId(), cycle.getStartDate(), cycle.getEndDate(), cycle.getUserId(), cycle.getMdn()))
                 .collect(Collectors.toList());
@@ -105,12 +108,9 @@ public class CycleService {
         return mostRecentCycle;
     }
 
-    private Boolean afterOrEquals(Date date1, Date date2) {
-        return date1.after(date2) || date1.equals(date2);
-    }
-
-    private Boolean beforeOrEquals(Date date1, Date date2) {
-        return date1.before(date2) || date1.equals(date2);
+    private Boolean idExists(String userId) {
+        Optional<User> user = userRepository.findById(userId);
+        return user.isPresent();
     }
 }
 
