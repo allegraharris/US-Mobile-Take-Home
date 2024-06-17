@@ -50,6 +50,19 @@ public class UserController {
         return new ResponseEntity<>(u.get(), HttpStatus.OK);
     }
 
+    @DeleteMapping("/delete/{mdn}")
+    public ResponseEntity<String> deleteUser(@PathVariable String mdn) {
+        Boolean b = userService.deleteUser(mdn);
+        if (!b) {
+            return ResponseEntity.status(HttpStatus.NOT_FOUND)
+                    .header("Content-Type", "text/plain")
+                    .body("User does not exist.");
+        }
+        return ResponseEntity.status(HttpStatus.OK)
+                .header("Content-Type", "text/plain")
+                .body("User deleted.");
+    }
+
     @GetMapping("/search/{email}")
     public ResponseEntity<Object> fetchUserByEmail(@PathVariable String email) {
         Optional<UserDTO> u = userService.getUserByEmail(email);

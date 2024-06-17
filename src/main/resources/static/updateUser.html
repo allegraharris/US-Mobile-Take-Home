@@ -13,6 +13,8 @@
     <input type="text" id="firstName" name="firstName" required><br><br>
     <label for="lastName">Last Name:</label><br>
     <input type="text" id="lastName" name="lastName" required><br><br>
+    <label for="mdn">Mdn (Phone Number):</label><br>
+    <input type="tel" id="mdn" name="mdn" required><br><br>
     <label for="email">Email:</label><br>
     <input type="email" id="email" name="email" required><br><br>
 
@@ -30,6 +32,7 @@
         const data = {
             firstName: document.getElementById('firstName').value,
             lastName: document.getElementById('lastName').value,
+            mdn: document.getElementById('mdn').value,
             email: document.getElementById('email').value
         };
 

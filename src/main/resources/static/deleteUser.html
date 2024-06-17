@@ -1,0 +1,50 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Delete User</title>
+</head>
+<body>
+<h1>Delete a User</h1>
+<form id="deleteUserForm">
+  <label for="mdn">Mdn (Phone Number):</label>
+  <input type="text" id="mdn" name="mdn" required><br><br>
+
+  <button type="submit">Delete User</button>
+</form>
+
+<div id="response"></div>
+
+<br><a href="/home">Return to Home</a>
+
+<script>
+  document.getElementById('deleteUserForm').addEventListener('submit', function(event) {
+    event.preventDefault();
+
+    const mdn = document.getElementById('mdn').value;
+
+    fetch(`/api/user/delete/${mdn}`, {
+      method: 'DELETE',
+      headers: {
+        'Content-Type': 'application/json'
+      }
+    })
+            .then(response => {
+              if (!response.ok) {
+                return response.text().then(text => { throw new Error(text); });
+              }
+              return response.text();
+            })
+            .then(message => {
+              document.getElementById('response').innerText = message;
+              document.getElementById('deleteUserForm').reset();
+            })
+            .catch(error => {
+              document.getElementById('response').innerText = `${error.message}`;
+              document.getElementById('deleteUserForm').reset();
+            });
+  });
+</script>
+</body>
+</html>

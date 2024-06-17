@@ -2,6 +2,8 @@ package com.harris.usmob.service;
 
 import com.harris.usmob.dto.UserDTO;
 import com.harris.usmob.entity.User;
+import com.harris.usmob.repository.CycleRepository;
+import com.harris.usmob.repository.DailyUsageRepository;
 import com.harris.usmob.repository.UserRepository;
 import lombok.AllArgsConstructor;
 import org.springframework.stereotype.Service;
@@ -14,13 +16,15 @@ import java.util.stream.Collectors;
 @Service
 public class UserService {
     private final UserRepository userRepository;
+    private final CycleRepository cycleRepository;
+    private final DailyUsageRepository dailyUsageRepository;
 
     public UserDTO createUser(User user) {
         if (userRepository.findByEmail(user.getEmail()) != null) {
             return null;
         }
         User savedUser = userRepository.save(user);
-        return new UserDTO(savedUser.getId(), savedUser.getFirstName(), savedUser.getLastName(), savedUser.getEmail());
+        return new UserDTO(savedUser.getId(), savedUser.getMdn(), savedUser.getFirstName(), savedUser.getLastName(), savedUser.getEmail());
     }
 
     public Optional<UserDTO> updateUser(String userId, User user) {
@@ -42,7 +46,7 @@ public class UserService {
             User savedUser = userRepository.save(userToUpdate);
 
 
-            return Optional.of(new UserDTO(savedUser.getId(), savedUser.getFirstName(), savedUser.getLastName(), savedUser.getEmail()));
+            return Optional.of(new UserDTO(savedUser.getId(), savedUser.getMdn(), savedUser.getFirstName(), savedUser.getLastName(), savedUser.getEmail()));
         }
         return Optional.empty();
     }
@@ -51,7 +55,7 @@ public class UserService {
         List<User> allUsers = userRepository.findAll();
 
         return allUsers.stream()
-                .map(user -> new UserDTO(user.getId(), user.getFirstName(), user.getLastName(), user.getEmail()))
+                .map(user -> new UserDTO(user.getId(), user.getMdn(), user.getFirstName(), user.getLastName(), user.getEmail()))
                 .collect(Collectors.toList());
     }
 
@@ -61,6 +65,20 @@ public class UserService {
         if (user == null) {
             return Optional.empty();
         }
-        return Optional.of(new UserDTO(user.getId(), user.getFirstName(), user.getLastName(), user.getEmail()));
+        return Optional.of(new UserDTO(user.getId(), user.getMdn(), user.getFirstName(), user.getLastName(), user.getEmail()));
+    }
+
+    public Boolean deleteUser(String mdn) {
+        User user = userRepository.findByMdn(mdn);
+
+        if(user == null) { return false; }
+
+        userRepository.deleteByMdn(mdn);
+
+        // Delete references to this user in other tables
+        cycleRepository.deleteByUserId(user.getId());
+        dailyUsageRepository.deleteByUserId(user.getId());
+
+        return true;
     }
 }

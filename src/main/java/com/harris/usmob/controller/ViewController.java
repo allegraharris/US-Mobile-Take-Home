@@ -21,6 +21,11 @@ public class ViewController {
         return "forward:/updateUser.html";
     }
 
+    @GetMapping("/user/delete")
+    public String deleteUser() {
+        return "forward:/deleteUser.html";
+    }
+
     @GetMapping("/user/search")
     public String searchUser() {
         return "forward:/searchByEmail.html";

@@ -14,6 +14,9 @@
     <label for="lastName">Last Name:</label>
     <input type="text" id="lastName" name="lastName" required><br><br>
 
+    <label for="mdn">Mdn (Phone Number):</label>
+    <input type="tel" id="mdn" name="mdn" required><br><br>
+
     <label for="email">Email:</label>
     <input type="email" id="email" name="email" required><br><br>
 
@@ -33,12 +36,14 @@
 
         const firstName = document.getElementById('firstName').value;
         const lastName = document.getElementById('lastName').value;
+        const mdn = document.getElementById('mdn').value;
         const email = document.getElementById('email').value;
         const password = document.getElementById('password').value;
 
         const user = {
             firstName: firstName,
             lastName: lastName,
+            mdn: mdn,
             email: email,
             password: password
         };

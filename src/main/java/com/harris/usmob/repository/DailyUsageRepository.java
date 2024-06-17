@@ -7,4 +7,5 @@ import java.util.List;
 
 public interface DailyUsageRepository extends MongoRepository<DailyUsage, String> {
     List<DailyUsage> findByUserIdAndMdn(String userId, String mdn);
+    void deleteByUserId(String userId);
 }
