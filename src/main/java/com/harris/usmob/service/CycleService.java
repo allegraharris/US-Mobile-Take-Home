@@ -39,7 +39,7 @@ public class CycleService {
         User user = userRepository.findById(userId).orElse(null);
 
         //Foreign key error or mdn mismatch
-        if(user == null || Objects.equals(user.getMdn(), mdn)) {
+        if(user == null || !Objects.equals(user.getMdn(), mdn)) {
             return null;
         }
 

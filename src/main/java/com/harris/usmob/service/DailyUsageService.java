@@ -80,6 +80,11 @@ public class DailyUsageService {
 
         //filter out for only most recent cycle
         List<Date> mostRecentDates = cycleService.getMostRecentCycle(userId, mdn);
+
+        if(mostRecentDates == null) {
+            return null;
+        }
+
         dailyUsages.removeIf(dailyUsage -> dailyUsage.getUsageDate().before(mostRecentDates.getFirst()) || dailyUsage.getUsageDate().after(mostRecentDates.get(1)));
 
 
