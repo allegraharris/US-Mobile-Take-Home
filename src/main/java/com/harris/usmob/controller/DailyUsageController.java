@@ -53,7 +53,7 @@ public class DailyUsageController {
     })
     @GetMapping("/all")
     public ResponseEntity<Object> getAllDailyUsages() {
-        List<DailyUsage> d = dailyUsageService.getAllDailyUsages();
+        List<DailyUsageDTO> d = dailyUsageService.getAllDailyUsages();
 
         if (d.isEmpty()) {
             return new ResponseEntity<>("No daily usages found.", HttpStatus.NOT_FOUND);

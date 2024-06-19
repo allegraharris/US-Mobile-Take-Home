@@ -1,5 +1,6 @@
 package com.harris.usmob.entity;
 
+import lombok.AllArgsConstructor;
 import lombok.Data;
 import org.springframework.data.mongodb.core.index.CompoundIndex;
 import org.springframework.data.mongodb.core.index.CompoundIndexes;
@@ -11,6 +12,7 @@ import java.util.Date;
 /**
  * Entity for Daily Usage
  */
+@AllArgsConstructor
 @Data
 @Document(collection = "daily_usage")
 @CompoundIndexes({
@@ -37,7 +39,7 @@ public class DailyUsage {
      */
     private Integer usedInMb;
     /**
-     * User ID - Foreign Key
+     * User ID
      */
     private String userId;
 }

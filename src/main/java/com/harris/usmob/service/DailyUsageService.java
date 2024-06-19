@@ -61,8 +61,12 @@ public class DailyUsageService {
      * Gets all Daily Usages
      * @return List of DailyUsage objects
      */
-    public List<DailyUsage> getAllDailyUsages() {
-        return dailyUsageRepository.findAll();
+    public List<DailyUsageDTO> getAllDailyUsages() {
+        List<DailyUsage> dailyUsages = dailyUsageRepository.findAll();
+
+        return dailyUsages.stream()
+                .map(dailyUsage -> new DailyUsageDTO(dailyUsage.getUsageDate(), dailyUsage.getUsedInMb()))
+                .collect(Collectors.toList());
     }
 
     /**

@@ -36,4 +36,7 @@ public class User {
     @Indexed(unique = true) // indexed as query email frequently
     private String email;
     /**
-     * P
+     * Password of user
+     */
+    private String password;
+}
