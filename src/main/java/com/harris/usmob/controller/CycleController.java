@@ -41,6 +41,17 @@ public class CycleController {
         return new ResponseEntity<>(c, HttpStatus.CREATED);
     }
 
+    @PostMapping("/delete/{cycleId}")
+    public ResponseEntity<Object> deleteCycle(@PathVariable String cycleId) {
+        Boolean b = cycleService.deleteCycle(cycleId);
+
+        if (!b) {
+            return new ResponseEntity<>("Cycle does not exist.", HttpStatus.NOT_FOUND);
+        }
+
+        return new ResponseEntity<>("Cycle deleted successfully.", HttpStatus.OK);
+    }
+
     @Operation(summary = "Get all cycles stored in the collection")
     @ApiResponses(value = {
             @ApiResponse(responseCode = "200", description = "Cycles found",

@@ -1,0 +1,65 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Update Used in Mb</title>
+</head>
+<body>
+<h1>Update Used in Mb</h1>
+<form id="updateMbForm">
+    <label for="mdn">MDN (Phone number):</label>
+    <input type="tel" id="mdn" name="mdn" required><br><br>
+
+    <label for="usageDate">Last Name:</label>
+    <input type="date" id="usageDate" name="usageDate" required><br><br>
+
+    <label for="usedInMb">New Total Mb Used:</label>
+    <input type="number" id="usedInMb" name="usedInMb" ><br><br>
+
+    <button type="submit">Update</button>
+</form>
+
+<div id="response"></div>
+
+<br><a href="/home">Return to Home</a>
+
+<script>
+    document.getElementById('updateMbForm').addEventListener('submit', function(event) {
+        event.preventDefault();
+
+        const mdn = document.getElementById('mdn').value;
+        const usageDate = document.getElementById('usageDate').value;
+        const usedInMb = document.getElementById('usedInMb').value;
+
+        const usageInfo = {
+            mdn: mdn,
+            usageDate: usageDate,
+        };
+
+        fetch(`/api/daily-usage/update/${usedInMb}`, {
+            method: 'PATCH',
+            headers: {
+                'Content-Type': 'application/json'
+            },
+            body: JSON.stringify(usageInfo)
+        })
+            .then(response => {
+                if (!response.ok) {
+                    return response.text().then(text => { throw new Error(text); });
+                }
+                return response.json();
+            })
+            .then(data => {
+                document.getElementById('response').innerText = JSON.stringify(data, null, 2);
+                document.getElementById('updateMbForm').reset();
+            })
+            .catch(error => {
+                console.error('Error:', error);
+                document.getElementById('response').innerText = `${error.message}`;
+                document.getElementById('updateMbForm').reset();
+            });
+    });
+</script>
+</body>
+</html>

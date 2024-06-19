@@ -8,10 +8,10 @@
 <body>
 <h1>Delete a User</h1>
 <form id="deleteUserForm">
-  <label for="mdn">Mdn (Phone Number):</label>
-  <input type="text" id="mdn" name="mdn" required><br><br>
+  <label for="id">User ID:</label>
+  <input type="text" id="id" name="id" required><br><br>
 
-  <button type="submit">Delete User</button>
+  <button type="submit">Delete</button>
 </form>
 
 <div id="response"></div>
@@ -22,9 +22,9 @@
   document.getElementById('deleteUserForm').addEventListener('submit', function(event) {
     event.preventDefault();
 
-    const mdn = document.getElementById('mdn').value;
+    const id = document.getElementById('id').value;
 
-    fetch(`/api/user/delete/${mdn}`, {
+    fetch(`/api/user/delete/${id}`, {
       method: 'DELETE',
       headers: {
         'Content-Type': 'application/json'

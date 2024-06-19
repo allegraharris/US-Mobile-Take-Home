@@ -1,0 +1,50 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Delete Daily Usage</title>
+</head>
+<body>
+<h1>Delete a Daily Usage</h1>
+<form id="deleteDailyUsageForm">
+    <label for="id">Daily Usage ID:</label>
+    <input type="text" id="id" name="id" required><br><br>
+
+    <button type="submit">Delete</button>
+</form>
+
+<div id="response"></div>
+
+<br><a href="/home">Return to Home</a>
+
+<script>
+    document.getElementById('deleteDailyUsageForm').addEventListener('submit', function(event) {
+        event.preventDefault();
+
+        const id = document.getElementById('id').value;
+
+        fetch(`/api/daily-usage/delete/${id}`, {
+            method: 'DELETE',
+            headers: {
+                'Content-Type': 'application/json'
+            }
+        })
+            .then(response => {
+                if (!response.ok) {
+                    return response.text().then(text => { throw new Error(text); });
+                }
+                return response.text();
+            })
+            .then(message => {
+                document.getElementById('response').innerText = message;
+                document.getElementById('deleteDailyUsageForm').reset();
+            })
+            .catch(error => {
+                document.getElementById('response').innerText = `${error.message}`;
+                document.getElementById('deleteDailyUsageForm').reset();
+            });
+    });
+</script>
+</body>
+</html>

@@ -1,0 +1,55 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Transfer MDN</title>
+</head>
+<body>
+<h1>Transfer MDN From User B to User A</h1>
+<form id="transferMdnForm">
+    <label for="userIdA">ID for User A:</label>
+    <input type="text" id="userIdA" name="userIdA" required><br><br>
+
+    <label for="userIdB">ID for User B:</label>
+    <input type="text" id="userIdB" name="userIdB" required><br><br>
+
+    <button type="submit">Transfer</button>
+</form>
+
+<div id="response"></div>
+
+<br><a href="/home">Return to Home</a>
+
+<script>
+    document.getElementById('transferMdnForm').addEventListener('submit', function(event) {
+        event.preventDefault();
+
+        const userIdA = document.getElementById('userIdA').value;
+        const userIdB = document.getElementById('userIdB').value;
+
+        fetch(`/api/user/transfer/${userIdA}/${userIdB}`, {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json'
+            }
+        })
+            .then(response => {
+                if (!response.ok) {
+                    return response.text().then(text => { throw new Error(text); });
+                }
+                return response.json();
+            })
+            .then(data => {
+                document.getElementById('response').innerText = JSON.stringify(data, null, 2);
+                document.getElementById('transferMdnForm').reset();
+            })
+            .catch(error => {
+                console.error('Error:', error);
+                document.getElementById('response').innerText = `${error.message}`;
+                document.getElementById('transferMdnForm').reset();
+            });
+    });
+</script>
+</body>
+</html>

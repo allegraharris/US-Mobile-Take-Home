@@ -49,9 +49,9 @@ public class UserController {
             @ApiResponse(responseCode = "404", description = "Error deleting user",
                     content = @Content)
     })
-    @DeleteMapping("/delete/{mdn}")
-    public ResponseEntity<Object> deleteUser(@PathVariable String mdn) {
-        Boolean b = userService.deleteUser(mdn);
+    @DeleteMapping("/delete/{id}")
+    public ResponseEntity<Object> deleteUser(@PathVariable String id) {
+        Boolean b = userService.deleteUser(id);
 
         if (!b) {
             return new ResponseEntity<>("User does not exist.", HttpStatus.NOT_FOUND);
@@ -106,5 +106,22 @@ public class UserController {
         Optional<UserDTO> u = userService.updateUser(userId, user);
 
         return u.<ResponseEntity<Object>>map(userDTO -> new ResponseEntity<>(userDTO, HttpStatus.OK)).orElseGet(() -> new ResponseEntity<>("User does not exist or new email is already in use.", HttpStatus.CONFLICT));
+    }
+
+    @Operation(summary = "Transfer MDN from one user to another")
+    @ApiResponses(value = {
+            @ApiResponse(responseCode = "200", description = "MDN transferred successfully",
+                    content = {@Content(mediaType = "application/json",
+                            schema = @Schema(implementation = UserDTO.class))}),
+            @ApiResponse(responseCode = "409", description = "Error transferring MDN",
+                    content = @Content)
+    })
+    @PostMapping("/transfer/{userIdA}/{userIdB}")
+    public ResponseEntity<Object> transferMDN(@PathVariable String userIdA, @PathVariable String userIdB) {
+        List<UserDTO> u = userService.transferMDN(userIdA, userIdB);
+
+        if (u == null) { return new ResponseEntity<>("Error transferring MDN.", HttpStatus.CONFLICT); }
+
+        return new ResponseEntity<>(u, HttpStatus.OK);
     }
 }

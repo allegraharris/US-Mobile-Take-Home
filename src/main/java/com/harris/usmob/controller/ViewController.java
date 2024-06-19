@@ -142,4 +142,37 @@ public class ViewController {
     public String updateUser() {
         return "forward:/updateUser.html";
     }
+
+    @Operation(summary = "Delete cycle page")
+    @ApiResponses(value = {
+            @ApiResponse(responseCode = "200", description = "Delete cycle page",
+                    content = {@Content(mediaType = "text/html",
+                            schema = @Schema(implementation = String.class))})
+    })
+    @GetMapping("/cycle/delete")
+    public String deleteCycle() {
+        return "forward:/deleteCycle.html";
+    }
+
+    @Operation(summary = "Transfer MDN page")
+    @ApiResponses(value = {
+            @ApiResponse(responseCode = "200", description = "Transfer MDN page",
+                    content = {@Content(mediaType = "text/html",
+                            schema = @Schema(implementation = String.class))})
+    })
+    @GetMapping("/user/transfer")
+    public String transferMDN() {
+        return "forward:/transferMDN.html";
+    }
+
+    @Operation(summary = "Update daily usage page")
+    @ApiResponses(value = {
+            @ApiResponse(responseCode = "200", description = "Update daily usage page",
+                    content = {@Content(mediaType = "text/html",
+                            schema = @Schema(implementation = String.class))})
+    })
+    @GetMapping("/daily-usage/update")
+    public String updateDailyUsage() {
+        return "forward:/updateUsedInMb.html";
+    }
 }

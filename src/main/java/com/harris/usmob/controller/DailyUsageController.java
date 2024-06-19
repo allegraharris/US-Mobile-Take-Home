@@ -82,4 +82,38 @@ public class DailyUsageController {
         return new ResponseEntity<>(dailyUsageHistory, HttpStatus.OK);
     }
 
+    @Operation(summary = "Delete a daily usage")
+    @ApiResponses(value = {
+            @ApiResponse(responseCode = "200", description = "Daily usage deleted successfully",
+                    content = @Content),
+            @ApiResponse(responseCode = "404", description = "Error deleting daily usage",
+                    content = @Content)
+    })
+    @DeleteMapping("/delete/{usageId}")
+    public ResponseEntity<Object> deleteDailyUsage(@PathVariable String usageId) {
+        Boolean b = dailyUsageService.deleteDailyUsage(usageId);
+
+        if (!b) { return new ResponseEntity<>("Daily usage does not exist.", HttpStatus.NOT_FOUND); }
+        return new ResponseEntity<>("Daily usage deleted successfully.", HttpStatus.OK);
+    }
+
+    @Operation(summary = "Update the daily usage in MB")
+    @ApiResponses(value = {
+            @ApiResponse(responseCode = "200", description = "Daily usage updated successfully",
+                    content = {@Content(mediaType = "application/json",
+                            schema = @Schema(implementation = DailyUsageDTO.class))}),
+            @ApiResponse(responseCode = "404", description = "Error updating daily usage",
+                    content = @Content)
+    })
+    @PatchMapping("/update/{usedInMb}")
+    public ResponseEntity<Object> updateUsedInMb(@RequestBody DailyUsage dailyUsage, @PathVariable int usedInMb) {
+        DailyUsageDTO d = dailyUsageService.updateUsedInMb(dailyUsage.getUsageDate(), dailyUsage.getMdn(), usedInMb);
+
+        if (d == null) {
+            return new ResponseEntity<>("Error updating daily usage", HttpStatus.NOT_FOUND);
+        }
+
+        return new ResponseEntity<>(d, HttpStatus.OK);
+    }
+
 }

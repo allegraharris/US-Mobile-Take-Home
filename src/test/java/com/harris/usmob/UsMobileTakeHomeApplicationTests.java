@@ -8,6 +8,7 @@ class UsMobileTakeHomeApplicationTests {
 
 	@Test
 	void contextLoads() {
+
 	}
 
 }
