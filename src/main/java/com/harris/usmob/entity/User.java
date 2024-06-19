@@ -1,5 +1,6 @@
 package com.harris.usmob.entity;
 
+import lombok.AllArgsConstructor;
 import lombok.Data;
 import org.springframework.data.mongodb.core.index.Indexed;
 import org.springframework.data.mongodb.core.mapping.Document;
@@ -8,6 +9,7 @@ import org.springframework.data.mongodb.core.mapping.MongoId;
 /**
  * Entity for User
  */
+@AllArgsConstructor
 @Data
 @Document(collection = "user")
 public class User {
@@ -34,7 +36,4 @@ public class User {
     @Indexed(unique = true) // indexed as query email frequently
     private String email;
     /**
-     * Password of user
-     */
-    private String password;
-}
+     * P
