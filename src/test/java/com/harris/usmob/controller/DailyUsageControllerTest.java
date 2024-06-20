@@ -13,8 +13,10 @@ import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.http.MediaType;
 import org.springframework.test.web.servlet.MockMvc;
 
+import java.text.SimpleDateFormat;
 import java.util.Collections;
 import java.util.Date;
+import java.util.TimeZone;
 
 import static org.mockito.ArgumentMatchers.*;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.*;
@@ -60,11 +62,19 @@ public class DailyUsageControllerTest {
     public void testAddDailyUsage() throws Exception {
         Mockito.when(dailyUsageService.addDailyUsage(any(DailyUsage.class))).thenReturn(mockDailyUsageDTO);
 
+        SimpleDateFormat isoFormat = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss.SSSXXX");
+        isoFormat.setTimeZone(TimeZone.getTimeZone("UTC"));
+
+        Date expectedDate = mockDailyUsageDTO.getUsageDate();
+        String expectedDateStr = isoFormat.format(expectedDate);
+
+        expectedDateStr = expectedDateStr.replace("Z", "+00:00");
+
         mockMvc.perform(post(BASE_URL + "/add")
                         .contentType(MediaType.APPLICATION_JSON)
                         .content(objectMapper.writeValueAsString(mockDailyUsage)))
                 .andExpect(status().isCreated())
-                .andExpect(jsonPath("$.usageDate").value(mockDailyUsageDTO.getUsageDate()))
+                .andExpect(jsonPath("$.usageDate").value(expectedDateStr))
                 .andExpect(jsonPath("$.usedInMb").value(mockDailyUsageDTO.getUsedInMb()));
     }
 
@@ -93,9 +103,17 @@ public class DailyUsageControllerTest {
     public void testGetAllDailyUsages() throws Exception {
         Mockito.when(dailyUsageService.getAllDailyUsages()).thenReturn(Collections.singletonList(mockDailyUsageDTO));
 
+        SimpleDateFormat isoFormat = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss.SSSXXX");
+        isoFormat.setTimeZone(TimeZone.getTimeZone("UTC"));
+
+        Date expectedDate = mockDailyUsageDTO.getUsageDate();
+        String expectedDateStr = isoFormat.format(expectedDate);
+
+        expectedDateStr = expectedDateStr.replace("Z", "+00:00");
+
         mockMvc.perform(get(BASE_URL + "/all"))
                 .andExpect(status().isOk())
-                .andExpect(jsonPath("$[0].usageDate").value(mockDailyUsageDTO.getUsageDate()))
+                .andExpect(jsonPath("$[0].usageDate").value(expectedDateStr))
                 .andExpect(jsonPath("$[0].usedInMb").value(mockDailyUsageDTO.getUsedInMb()));
     }
 
@@ -123,9 +141,17 @@ public class DailyUsageControllerTest {
         Mockito.when(dailyUsageService.getDailyUsageHistory(anyString(), anyString()))
                 .thenReturn(Collections.singletonList(mockDailyUsageDTO));
 
+        SimpleDateFormat isoFormat = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss.SSSXXX");
+        isoFormat.setTimeZone(TimeZone.getTimeZone("UTC"));
+
+        Date expectedDate = mockDailyUsageDTO.getUsageDate();
+        String expectedDateStr = isoFormat.format(expectedDate);
+
+        expectedDateStr = expectedDateStr.replace("Z", "+00:00");
+
         mockMvc.perform(get(BASE_URL + "/history/{userId}/{mdn}", "userId", mockDailyUsage.getMdn()))
                 .andExpect(status().isOk())
-                .andExpect(jsonPath("$[0].usageDate").value(mockDailyUsageDTO.getUsageDate()))
+                .andExpect(jsonPath("$[0].usageDate").value(expectedDateStr))
                 .andExpect(jsonPath("$[0].usedInMb").value(mockDailyUsageDTO.getUsedInMb()));
     }
 
@@ -181,13 +207,21 @@ public class DailyUsageControllerTest {
     public void testUpdateUsedInMb() throws Exception {
         DailyUsageDTO mockDailyUsageDTOUpdated = new DailyUsageDTO(mockDailyUsage.getUsageDate(), 1000);
 
+        SimpleDateFormat isoFormat = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss.SSSXXX");
+        isoFormat.setTimeZone(TimeZone.getTimeZone("UTC"));
+
+        Date expectedDate = mockDailyUsageDTO.getUsageDate();
+        String expectedDateStr = isoFormat.format(expectedDate);
+
+        expectedDateStr = expectedDateStr.replace("Z", "+00:00");
+
         Mockito.when(dailyUsageService.updateUsedInMb(any(), anyString(), eq(1000))).thenReturn(mockDailyUsageDTOUpdated);
 
         mockMvc.perform(patch(BASE_URL + "/update/{usedInMb}", 1000)
                         .contentType(MediaType.APPLICATION_JSON)
                         .content(objectMapper.writeValueAsString(mockDailyUsage)))
                 .andExpect(status().isOk())
-                .andExpect(jsonPath("$.usageDate").value(mockDailyUsageDTOUpdated.getUsageDate()))
+                .andExpect(jsonPath("$.usageDate").value(expectedDateStr))
                 .andExpect(jsonPath("$.usedInMb").value(1000));
     }
 

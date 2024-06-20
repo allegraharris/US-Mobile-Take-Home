@@ -13,8 +13,10 @@ import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.http.MediaType;
 import org.springframework.test.web.servlet.MockMvc;
 
+import java.text.SimpleDateFormat;
 import java.util.Collections;
 import java.util.Date;
+import java.util.TimeZone;
 
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.anyString;
@@ -63,13 +65,25 @@ public class CycleControllerTest {
     public void testAddCycle() throws Exception {
         Mockito.when(cycleService.addCycle(any(Cycle.class))).thenReturn(mockCycleDTO);
 
+        SimpleDateFormat isoFormat = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss.SSSXXX");
+        isoFormat.setTimeZone(TimeZone.getTimeZone("UTC"));
+
+        Date expectedStartDate = mockCycleDTO.getStartDate();
+        String expectedStartDateStr = isoFormat.format(expectedStartDate);
+
+        Date expectedEndDate = mockCycleDTO.getEndDate();
+        String expectedEndDateStr = isoFormat.format(expectedEndDate);
+
+        expectedStartDateStr = expectedStartDateStr.replace("Z", "+00:00");
+        expectedEndDateStr = expectedEndDateStr.replace("Z", "+00:00");
+
         mockMvc.perform(post(BASE_URL + "/add")
                         .contentType(MediaType.APPLICATION_JSON)
                         .content(objectMapper.writeValueAsString(mockCycle)))
                 .andExpect(status().isCreated())
                 .andExpect(jsonPath("$.cycleId").value(mockCycleDTO.getCycleId()))
-                .andExpect(jsonPath("$.startDate").value(mockCycleDTO.getStartDate()))
-                .andExpect(jsonPath("$.endDate").value(mockCycleDTO.getEndDate()));
+                .andExpect(jsonPath("$.startDate").value(expectedStartDateStr))
+                .andExpect(jsonPath("$.endDate").value(expectedEndDateStr));
     }
 
     /**
@@ -125,11 +139,23 @@ public class CycleControllerTest {
     public void testGetAllCycles() throws Exception {
         Mockito.when(cycleService.getAllCycles()).thenReturn(Collections.singletonList(mockCycleDTO));
 
+        SimpleDateFormat isoFormat = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss.SSSXXX");
+        isoFormat.setTimeZone(TimeZone.getTimeZone("UTC"));
+
+        Date expectedStartDate = mockCycleDTO.getStartDate();
+        String expectedStartDateStr = isoFormat.format(expectedStartDate);
+
+        Date expectedEndDate = mockCycleDTO.getEndDate();
+        String expectedEndDateStr = isoFormat.format(expectedEndDate);
+
+        expectedStartDateStr = expectedStartDateStr.replace("Z", "+00:00");
+        expectedEndDateStr = expectedEndDateStr.replace("Z", "+00:00");
+
         mockMvc.perform(get(BASE_URL + "/all"))
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("$[0].cycleId").value(mockCycleDTO.getCycleId()))
-                .andExpect(jsonPath("$[0].startDate").value(mockCycleDTO.getStartDate()))
-                .andExpect(jsonPath("$[0].endDate").value(mockCycleDTO.getEndDate()));
+                .andExpect(jsonPath("$[0].startDate").value(expectedStartDateStr))
+                .andExpect(jsonPath("$[0].endDate").value(expectedEndDateStr));
     }
 
     /**
@@ -155,11 +181,23 @@ public class CycleControllerTest {
     public void testGetCycleHistory() throws Exception {
         Mockito.when(cycleService.getCycleHistory(anyString(), anyString())).thenReturn(Collections.singletonList(mockCycleDTO));
 
+        SimpleDateFormat isoFormat = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss.SSSXXX");
+        isoFormat.setTimeZone(TimeZone.getTimeZone("UTC"));
+
+        Date expectedStartDate = mockCycleDTO.getStartDate();
+        String expectedStartDateStr = isoFormat.format(expectedStartDate);
+
+        Date expectedEndDate = mockCycleDTO.getEndDate();
+        String expectedEndDateStr = isoFormat.format(expectedEndDate);
+
+        expectedStartDateStr = expectedStartDateStr.replace("Z", "+00:00");
+        expectedEndDateStr = expectedEndDateStr.replace("Z", "+00:00");
+
         mockMvc.perform(get(BASE_URL + "/history/{userId}/{mdn}", mockCycle.getUserId(), mockCycle.getMdn()))
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("$[0].cycleId").value(mockCycleDTO.getCycleId()))
-                .andExpect(jsonPath("$[0].startDate").value(mockCycleDTO.getStartDate()))
-                .andExpect(jsonPath("$[0].endDate").value(mockCycleDTO.getEndDate()));
+                .andExpect(jsonPath("$[0].startDate").value(expectedStartDateStr))
+                .andExpect(jsonPath("$[0].endDate").value(expectedEndDateStr));
     }
 
     /**
