@@ -6,15 +6,15 @@ This project is a Spring Boot application written in Java, using Maven as a buil
 
 ### Cycle
 
-`Cycle` is an entity class that represents a cycle. It contains fields `id`, `mdn`, `startDate`, `endDate`, and `userId`.
+`Cycle` is an entity class that represents a cycle document. It contains fields `id`, `mdn`, `startDate`, `endDate`, and `userId`.
 
 ### DailyUsage
 
-`DailyUsage` is an entity class that represents a daily usage record. It contains fields `id`, `mdn`, `usageDate`, `usedInMb`, and `userId`.
+`DailyUsage` is an entity class that represents a daily usage document. It contains fields `id`, `mdn`, `usageDate`, `usedInMb`, and `userId`.
 
 ### User
 
-`User` is an entity class that represents a user. It contains fields `id`, `mdn`, `firstName`, `lastName`, `email`, and `password`. There is a 1-1 relationship between a user and an mdn. 
+`User` is an entity class that represents a user document. It contains fields `id`, `mdn`, `firstName`, `lastName`, `email`, and `password`. There is a 1-1 relationship between a user and an mdn. 
 
 ## Repositories
 
