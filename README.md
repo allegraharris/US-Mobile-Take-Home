@@ -115,6 +115,12 @@ I would implement a more comprehensive test suite to ensure I have thoroughly te
 
 Finally, I would implement secret credential management and also audit db changes through the use of logging. 
 
+## Challenges
+
+I faced several challenges implementing this project. Chunks of code kept disappearing! This slowed my work down quite a bit. Unfortunately, I think my computer is on its last legs - I put it through the ringer during my degree. However, I was able to push through - SMC/PRAM resets managed to keep the issue at bay for a bit but truly regular git commits saved the day and ensured that I never lost too much code at a time. 
+
+Additionally, I struggled most with setting up connection to MongoDB/using Docker and setting up the embedded tests. Both of these turned out to be simple in the end but the lack of clear instructions online and a lot of conflicting advice resulted in these two aspects being the most time consuming. That said, I was eventually able to figure out how to implement these two aspects and am proud of myself for doing so!
+
 ## What I Learned
 
-Where do I begin? Before this project I had never used SpringBoot, implemented/designed a REST server, written HTML, written Swagger docs, used MongoDB, or written embedded DB tests. In a week, I taught myself how to do all of these things and implement a REST server that I am proud of (even though there are certainly improvements that can be made as listed above). Regardless of how this turns out with the job, I just wanted to add that I am very grateful for this experience to learn so much as this experience has strengthened my skills in new ways and will be of benefit to me either way. However, if this does work out, I am very much looking forward to learning so much on the job with USMobile! I hope I have demonstrated that I can learn new topics quickly and have the ability to self-teach. 
+Where do I begin? Before this project I had never used SpringBoot, Docker, implemented/designed a REST server, written HTML, written Swagger docs, used MongoDB, or written embedded DB tests. In a week, I taught myself how to do all of these things and implement a REST server that I am proud of (even though there are certainly improvements that can be made as listed above). Regardless of how this turns out with the job, I just wanted to add that I am very grateful for this experience to learn so much as this experience has strengthened my skills in new ways and will be of benefit to me either way. However, if this does work out, I am very much looking forward to learning so much on the job with USMobile! I hope I have demonstrated that I can learn new topics quickly and have the ability to self-teach. 
