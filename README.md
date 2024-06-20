@@ -77,7 +77,7 @@ To test the application, run the following command in the terminal:
 ```bash
 mvn test
 ```
-Please note that running these tests will clear all data from `mydatabase` due to the embedded nature and set-up of some of the tests. 
+Please note that running these tests will clear all data from `mydatabase` due to the embedded nature and set-up of some of the tests. For this reason, I recommend playing around with the initial data I have added to the db first to get an idea of functionality before running the test suite. 
 
 ## Future Improvements
 
@@ -106,6 +106,10 @@ I would add more endpoints to expand the functionality of my microservice. For i
 ### Improve HTML Forms
 
 I would modify the visual look of my HTML forms to make them look more professional and improve user experience. I did not know HTML before beginning this project and so I had to stick to the basics. 
+
+### Testing
+
+I would implement a more comprehensive test suite to ensure I have thoroughly tested my application. Additionally, I would create a separate db `test` that exists only for the purposes of embedded testing so that the data from `mydatabase` doesn't get wiped each time tests are run.
 
 ### Additional Improvements
 
