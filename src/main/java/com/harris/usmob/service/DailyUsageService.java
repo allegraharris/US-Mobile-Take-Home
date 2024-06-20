@@ -34,6 +34,7 @@ public class DailyUsageService {
 
     /**
      * Adds a new daily usage to the collection
+     *
      * @param dailyUsage Daily Usage
      * @return DailyUsageDTO object
      */
@@ -58,7 +59,25 @@ public class DailyUsageService {
     }
 
     /**
+     * Deletes a Daily Usage from the collection
+     *
+     * @param usageId Daily Usage ID
+     * @return Boolean
+     */
+    public Boolean deleteDailyUsage(String usageId) {
+        DailyUsage dailyUsage = dailyUsageRepository.findById(usageId).orElse(null);
+
+        if (dailyUsage == null) {
+            return false;
+        }
+
+        dailyUsageRepository.delete(dailyUsage);
+        return true;
+    }
+
+    /**
      * Gets all Daily Usages
+     *
      * @return List of DailyUsage objects
      */
     public List<DailyUsageDTO> getAllDailyUsages() {
@@ -71,8 +90,9 @@ public class DailyUsageService {
 
     /**
      * Gets Daily Usage History for a User
+     *
      * @param userId User ID
-     * @param mdn MDN
+     * @param mdn    MDN
      * @return List of DailyUsageDTO objects
      */
     public List<DailyUsageDTO> getDailyUsageHistory(String userId, String mdn) {
@@ -81,7 +101,7 @@ public class DailyUsageService {
         //filter out for only most recent cycle
         List<Date> mostRecentDates = cycleService.getMostRecentCycle(userId, mdn);
 
-        if(mostRecentDates == null) {
+        if (mostRecentDates == null) {
             return null;
         }
 
@@ -94,24 +114,11 @@ public class DailyUsageService {
     }
 
     /**
-     * Deletes a Daily Usage from the collection
-     * @param usageId Daily Usage ID
-     * @return Boolean
-     */
-    public Boolean deleteDailyUsage(String usageId) {
-        DailyUsage dailyUsage = dailyUsageRepository.findById(usageId).orElse(null);
-
-        if (dailyUsage == null) { return false; }
-
-        dailyUsageRepository.delete(dailyUsage);
-        return true;
-    }
-
-    /**
      * Updates the used in Mb for a daily usage
+     *
      * @param usageDate Usage Date
-     * @param mdn MDN
-     * @param usedInMb Used in Mb
+     * @param mdn       MDN
+     * @param usedInMb  Used in Mb
      * @return DailyUsageDTO object
      */
     public DailyUsageDTO updateUsedInMb(Date usageDate, String mdn, int usedInMb) {

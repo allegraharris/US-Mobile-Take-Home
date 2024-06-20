@@ -18,20 +18,26 @@ import java.util.List;
 
 import static org.junit.jupiter.api.Assertions.*;
 
+/**
+ * Unit tests for the DailyUsageService class.
+ */
 @DataMongoTest
 public class DailyUsageServiceTest {
 
     @Autowired
-    private UserRepository userRepository;
+    private CycleRepository cycleRepository;
 
     @Autowired
     private DailyUsageRepository dailyUsageRepository;
 
-    @Autowired
-    private CycleRepository cycleRepository;
-
     private DailyUsageService dailyUsageService;
 
+    @Autowired
+    private UserRepository userRepository;
+
+    /**
+     * Set up the test environment.
+     */
     @BeforeEach
     void setUp() {
         userRepository.deleteAll();
@@ -40,60 +46,38 @@ public class DailyUsageServiceTest {
         dailyUsageService = new DailyUsageService(cycleService, dailyUsageRepository, userRepository);
     }
 
+    /**
+     * Tear down the test environment.
+     */
     @AfterEach
     void tearDown() {
         userRepository.deleteAll();
         dailyUsageRepository.deleteAll();
     }
 
+    /**
+     * Test adding a daily usage.
+     * Expect the daily usage to be added successfully.
+     */
     @Test
     void testAddDailyUsage() {
-        // Given
         User user = new User("user-id-1", "2024600871", "John", "Doe", "john@doe.com", "password");
         userRepository.save(user);
 
         DailyUsage dailyUsage = new DailyUsage("usage-id-1", "2024600871", new Date(), 100, "user-id-1");
 
-        // When
         DailyUsageDTO createdDailyUsage = dailyUsageService.addDailyUsage(dailyUsage);
 
-        // Then
         assertNotNull(createdDailyUsage);
         assertEquals(100, createdDailyUsage.getUsedInMb());
-        // Add more assertions based on your business logic
     }
 
-    @Test
-    void testAddDailyUsage_WhenUserNotFound() {
-        // Given - no user in database
-
-        DailyUsage dailyUsage = new DailyUsage("usage-id-2", "2024600871", new Date(), 400, "nonexistent-user-id");
-
-        // When
-        DailyUsageDTO createdDailyUsage = dailyUsageService.addDailyUsage(dailyUsage);
-
-        // Then
-        assertNull(createdDailyUsage);
-    }
-
-    @Test
-    void testAddDailyUsage_WhenMdnMismatch() {
-        // Given
-        User user = new User("user-id-3", "2024600873", "Alice", "Smith", "alice@example.com", "password");
-        userRepository.save(user);
-
-        DailyUsage dailyUsage = new DailyUsage("usage-id-3", "2024600871", new Date(), 300, "user-id-3");
-
-        // When
-        DailyUsageDTO createdDailyUsage = dailyUsageService.addDailyUsage(dailyUsage);
-
-        // Then
-        assertNull(createdDailyUsage);
-    }
-
+    /**
+     * Test adding a daily usage when there is a duplicate usage date.
+     * Expect the daily usage to not be added.
+     */
     @Test
     void testAddDailyUsage_WhenDuplicateUsageDate() {
-        // Given
         User user = new User("user-id-4", "2024600874", "Bob", "Johnson", "bob@example.com", "password");
         userRepository.save(user);
 
@@ -103,32 +87,88 @@ public class DailyUsageServiceTest {
 
         DailyUsage duplicateDailyUsage = new DailyUsage("usage-id-5", "2024600874", usageDate, 500, "user-id-4");
 
-        // When
         DailyUsageDTO createdDailyUsage = dailyUsageService.addDailyUsage(duplicateDailyUsage);
 
-        // Then
         assertNull(createdDailyUsage);
     }
 
+    /**
+     * Test adding a daily usage when the MDN does not match the user.
+     * Expect the daily usage to not be added.
+     */
+    @Test
+    void testAddDailyUsage_WhenMdnMismatch() {
+        User user = new User("user-id-3", "2024600873", "Alice", "Smith", "alice@example.com", "password");
+        userRepository.save(user);
+
+        DailyUsage dailyUsage = new DailyUsage("usage-id-3", "2024600871", new Date(), 300, "user-id-3");
+
+        DailyUsageDTO createdDailyUsage = dailyUsageService.addDailyUsage(dailyUsage);
+
+        assertNull(createdDailyUsage);
+    }
+
+    /**
+     * Test adding a daily usage when the user does not exist in user collection.
+     * Expect the daily usage to not be added.
+     */
+    @Test
+    void testAddDailyUsage_WhenUserNotFound() {
+        DailyUsage dailyUsage = new DailyUsage("usage-id-2", "2024600871", new Date(), 400, "nonexistent-user-id");
+
+        DailyUsageDTO createdDailyUsage = dailyUsageService.addDailyUsage(dailyUsage);
+
+        assertNull(createdDailyUsage);
+    }
+
+    /**
+     * Test deleting a daily usage.
+     * Expect the daily usage to be deleted successfully.
+     */
+    @Test
+    void testDeleteDailyUsage() {
+        DailyUsage dailyUsage = new DailyUsage("usage-id-12", "2024600871", new Date(), 1200, "user-id-1");
+        dailyUsageRepository.save(dailyUsage);
+
+        boolean result = dailyUsageService.deleteDailyUsage("usage-id-12");
+
+        assertTrue(result);
+        assertFalse(dailyUsageRepository.findById("usage-id-12").isPresent());
+    }
+
+    /**
+     * Test deleting a daily usage when the usage is not found.
+     * Expect the daily usage to not be deleted.
+     */
+    @Test
+    void testDeleteDailyUsage_WhenUsageNotFound() {
+        boolean result = dailyUsageService.deleteDailyUsage("nonexistent-usage-id");
+        assertFalse(result);
+    }
+
+    /**
+     * Test getting all daily usages.
+     * Expect all daily usages to be returned.
+     */
     @Test
     void testGetAllDailyUsages() {
-        // Given
         DailyUsage dailyUsage1 = new DailyUsage("usage-id-6", "2024600871", new Date(), 600, "user-id-1");
         DailyUsage dailyUsage2 = new DailyUsage("usage-id-7", "2024600872", new Date(), 700, "user-id-2");
         dailyUsageRepository.saveAll(List.of(dailyUsage1, dailyUsage2));
 
-        // When
         List<DailyUsageDTO> allDailyUsages = dailyUsageService.getAllDailyUsages();
 
-        // Then
         assertEquals(2, allDailyUsages.size());
         assertEquals(600, allDailyUsages.get(0).getUsedInMb());
         assertEquals(700, allDailyUsages.get(1).getUsedInMb());
     }
 
+    /**
+     * Test getting daily usage history for a given user.
+     * Expect the correct daily usage history to be returned.
+     */
     @Test
     void testGetDailyUsageHistory() {
-        // Given
         User user = new User("user-id-5", "2024600875", "Charlie", "Brown", "charlie@example.com", "password");
         userRepository.save(user);
 
@@ -142,18 +182,19 @@ public class DailyUsageServiceTest {
         Cycle cycle = new Cycle("cycle-id-1", "2024600875", startDate, endDate, "user-id-5");
         cycleRepository.save(cycle);
 
-        // When
         List<DailyUsageDTO> usageHistory = dailyUsageService.getDailyUsageHistory("user-id-5", "2024600875");
 
-        // Then
         assertEquals(2, usageHistory.size());
         assertEquals(800, usageHistory.get(0).getUsedInMb());
         assertEquals(900, usageHistory.get(1).getUsedInMb());
     }
 
+    /**
+     * Test getting daily usage history for a given user when no recent cycle exists.
+     * Expect null to be returned.
+     */
     @Test
     void testGetDailyUsageHistory_WhenNoRecentCycle() {
-        // Given
         User user = new User("user-id-6", "2024600876", "Eve", "Davis", "eve@example.com", "password");
         userRepository.save(user);
 
@@ -161,41 +202,17 @@ public class DailyUsageServiceTest {
         DailyUsage dailyUsage2 = new DailyUsage("usage-id-11", "2024600876", new Date(), 1100, "user-id-6");
         dailyUsageRepository.saveAll(List.of(dailyUsage1, dailyUsage2));
 
-        // When
         List<DailyUsageDTO> usageHistory = dailyUsageService.getDailyUsageHistory("user-id-6", "2024600876");
 
-        // Then
         assertNull(usageHistory);
     }
 
-    @Test
-    void testDeleteDailyUsage() {
-        // Given
-        DailyUsage dailyUsage = new DailyUsage("usage-id-12", "2024600871", new Date(), 1200, "user-id-1");
-        dailyUsageRepository.save(dailyUsage);
-
-        // When
-        boolean result = dailyUsageService.deleteDailyUsage("usage-id-12");
-
-        // Then
-        assertTrue(result);
-        assertFalse(dailyUsageRepository.findById("usage-id-12").isPresent());
-    }
-
-    @Test
-    void testDeleteDailyUsage_WhenUsageNotFound() {
-        // Given - no usage in database
-
-        // When
-        boolean result = dailyUsageService.deleteDailyUsage("nonexistent-usage-id");
-
-        // Then
-        assertFalse(result);
-    }
-
+    /**
+     * Test update used in Mb for a daily usage.
+     * Expect the used in Mb to be updated successfully.
+     */
     @Test
     void testUpdateUsedInMb() {
-        // Given
         User user = new User("user-id-7", "2024600877", "Frank", "Evans", "frank@example.com", "password");
         userRepository.save(user);
 
@@ -203,24 +220,19 @@ public class DailyUsageServiceTest {
         DailyUsage dailyUsage = new DailyUsage("usage-id-13", "2024600877", usageDate, 1300, "user-id-7");
         dailyUsageRepository.save(dailyUsage);
 
-        // When
         DailyUsageDTO updatedDailyUsage = dailyUsageService.updateUsedInMb(usageDate, "2024600877", 1500);
 
-        // Then
         assertNotNull(updatedDailyUsage);
         assertEquals(1500, updatedDailyUsage.getUsedInMb());
     }
 
+    /**
+     * Test updating the used in Mb for a daily usage when the usage is not found.
+     * Expect null to be returned.
+     */
     @Test
     void testUpdateUsedInMb_WhenUsageNotFound() {
-        // Given - no usage in database
-
-        Date usageDate = new Date();
-
-        // When
-        DailyUsageDTO updatedDailyUsage = dailyUsageService.updateUsedInMb(usageDate, "nonexistent-mdn", 1500);
-
-        // Then
+        DailyUsageDTO updatedDailyUsage = dailyUsageService.updateUsedInMb(new Date(), "nonexistent-mdn", 1500);
         assertNull(updatedDailyUsage);
     }
 }

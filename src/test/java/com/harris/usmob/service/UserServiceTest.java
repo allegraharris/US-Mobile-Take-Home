@@ -16,11 +16,11 @@ import java.util.Optional;
 
 import static org.junit.jupiter.api.Assertions.*;
 
+/**
+ * Unit tests for the UserService class.
+ */
 @DataMongoTest
 public class UserServiceTest {
-
-    @Autowired
-    private UserRepository userRepository;
 
     @Autowired
     private CycleRepository cycleRepository;
@@ -28,8 +28,14 @@ public class UserServiceTest {
     @Autowired
     private DailyUsageRepository dailyUsageRepository;
 
+    @Autowired
+    private UserRepository userRepository;
+
     private UserService userService;
 
+    /**
+     * Set up the test environment.
+     */
     @BeforeEach
     void setUp() {
         userRepository.deleteAll();
@@ -38,6 +44,9 @@ public class UserServiceTest {
         userService = new UserService(cycleRepository, dailyUsageRepository, userRepository);
     }
 
+    /**
+     * Tear down the test environment.
+     */
     @AfterEach
     void tearDown() {
         userRepository.deleteAll();
@@ -45,160 +54,152 @@ public class UserServiceTest {
         dailyUsageRepository.deleteAll();
     }
 
+    /**
+     * Test creating a user.
+     * Expect the user to be created successfully.
+     */
     @Test
     void testCreateUser() {
-        // Given
         User user = new User("user-id-1", "2024600871", "John", "Doe", "john@doe.com", "password");
 
-        // When
         UserDTO createdUser = userService.createUser(user);
 
-        // Then
         assertNotNull(createdUser);
         assertEquals("john@doe.com", createdUser.getEmail());
-        // Add more assertions based on your business logic
     }
 
+    /**
+     * Test creating a user when the email already exists.
+     * Expect the user to not be created.
+     */
+    @Test
+    void testCreateUser_WhenEmailAlreadyExists() {
+        User existingUser = new User("userId1", "2024600871", "John", "Doe", "john@doe.com", "password");
+        userRepository.save(existingUser);
+
+        User newUser = new User("user-id-1", "2024600872", "Jane", "Doe", "john@doe.com", "password");
+        UserDTO createdUser = userService.createUser(newUser);
+
+        assertNull(createdUser);
+    }
+
+    /**
+     * Test deleting a user.
+     * Expect the user to be deleted successfully.
+     */
     @Test
     void testDeleteUser() {
-        // Given
         User user = new User("userId2", "2024600872", "Jane", "Doe", "jane@doe.com", "password");
         userRepository.save(user);
 
-        // When
         boolean result = userService.deleteUser("userId2");
 
-        // Then
         assertTrue(result);
         assertFalse(userRepository.findById("userId2").isPresent());
     }
 
+    /**
+     * Test deleting a user when the user is not found.
+     * Expect the user to not be deleted.
+     */
+    @Test
+    void testDeleteUser_WhenUserNotFound() {
+        boolean result = userService.deleteUser("nonexistent-user-id");
+        assertFalse(result);
+    }
+
+    /**
+     * Test getting all users.
+     * Expect all users to be returned.
+     */
+    @Test
+    void testGetAllUsers() {
+        userRepository.save(new User("userId5", "2024600874", "Charlie", "Brown", "charlie@example.com", "password"));
+
+        List<UserDTO> allUsers = userService.getAllUsers();
+
+        assertEquals(1, allUsers.size());
+        assertEquals("2024600874", allUsers.getFirst().getMdn());
+    }
+
+    /**
+     * Test getting a user by email.
+     * Expect the correct user to be returned.
+     */
+    @Test
+    void testGetUserByEmail() {
+        User user = new User("userId6", "2024600875", "Eve", "Davis", "eve@example.com", "password");
+        userRepository.save(user);
+
+        Optional<UserDTO> foundUser = userService.getUserByEmail("eve@example.com");
+
+        assertTrue(foundUser.isPresent());
+        assertEquals("2024600875", foundUser.get().getMdn());
+    }
+
+    /**
+     * Test getting a user by email when the user is not found.
+     * Expect an empty optional.
+     */
+    @Test
+    void testGetUserByEmail_WhenEmailNotFound() {
+        Optional<UserDTO> foundUser = userService.getUserByEmail("nonexistent@example.com");
+        assertFalse(foundUser.isPresent());
+    }
+
+    /**
+     * Test transferring MDN from one user to another.
+     * Expect the MDN to be transferred successfully.
+     */
     @Test
     void testTransferMDN() {
-        // Given
         User userA = new User("userId3", "2024600873", "Alice", "Smith", "alice@example.com", "passwordA");
         User userB = new User("userId4", "", "Bob", "Johnson", "bob@example.com", "passwordB");
         userRepository.save(userA);
         userRepository.save(userB);
 
-        // When
         List<UserDTO> updatedUsers = userService.transferMDN("userId4", "userId3");
 
-        // Then
         assertNotNull(updatedUsers);
         assertEquals(2, updatedUsers.size());
         assertEquals("2024600873", updatedUsers.getFirst().getMdn());
         assertEquals("", updatedUsers.get(1).getMdn());
     }
 
+    /**
+     * Test transferring MDN when the user is not found.
+     * Expect null.
+     */
     @Test
-    void testGetAllUsers() {
-        // Given
-        userRepository.save(new User("userId5", "2024600874", "Charlie", "Brown", "charlie@example.com", "password"));
-
-        // When
-        List<UserDTO> allUsers = userService.getAllUsers();
-
-        // Then
-        assertEquals(1, allUsers.size());
-        assertEquals("2024600874", allUsers.getFirst().getMdn());
+    void testTransferMDN_WhenUserNotFound() {
+        List<UserDTO> updatedUsers = userService.transferMDN("nonexistent-user-id", "another-nonexistent-user-id");
+        assertNull(updatedUsers);
     }
 
-    @Test
-    void testGetUserByEmail() {
-        // Given
-        User user = new User("userId6", "2024600875", "Eve", "Davis", "eve@example.com", "password");
-        userRepository.save(user);
-
-        // When
-        Optional<UserDTO> foundUser = userService.getUserByEmail("eve@example.com");
-
-        // Then
-        assertTrue(foundUser.isPresent());
-        assertEquals("2024600875", foundUser.get().getMdn());
-    }
-
+    /**
+     * Test updating a user.
+     * Expect the user to be updated successfully.
+     */
     @Test
     void testUpdateUser() {
-        // Given
         User user = new User("userId7", "2024600876", "Frank", "Evans", "frank@example.com", "password");
         userRepository.save(user);
 
         User updatedUser = new User("userId7", "2024600876", "Franklin", "Evans", "franklin@example.com", "newPassword");
 
-        // When
         Optional<UserDTO> updatedUserDTO = userService.updateUser("userId7", updatedUser);
 
-        // Then
         assertTrue(updatedUserDTO.isPresent());
         assertEquals("Franklin", updatedUserDTO.get().getFirstName());
         assertEquals("franklin@example.com", updatedUserDTO.get().getEmail());
     }
 
-    @Test
-    void testCreateUser_WhenEmailAlreadyExists() {
-        // Given
-        User existingUser = new User("userId1", "2024600871", "John", "Doe", "john@doe.com", "password");
-        userRepository.save(existingUser);
-
-        User newUser = new User("user-id-1", "2024600872", "Jane", "Doe", "john@doe.com", "password");
-
-        // When
-        UserDTO createdUser = userService.createUser(newUser);
-
-        // Then
-        assertNull(createdUser); // Expecting null because user creation should fail
-    }
-
-    @Test
-    void testDeleteUser_WhenUserNotFound() {
-        // Given - no user in database
-
-        // When
-        boolean result = userService.deleteUser("nonexistent-user-id");
-
-        // Then
-        assertFalse(result);
-    }
-
-    @Test
-    void testTransferMDN_WhenUserNotFound() {
-        // Given - no users in database
-
-        // When
-        List<UserDTO> updatedUsers = userService.transferMDN("nonexistent-user-id", "another-nonexistent-user-id");
-
-        // Then
-        assertNull(updatedUsers); // Expecting null because transfer should fail
-    }
-
-    @Test
-    void testGetUserByEmail_WhenEmailNotFound() {
-        // Given - no users in database
-
-        // When
-        Optional<UserDTO> foundUser = userService.getUserByEmail("nonexistent@example.com");
-
-        // Then
-        assertFalse(foundUser.isPresent());
-    }
-
-    @Test
-    void testUpdateUser_WhenUserNotFound() {
-        // Given - no users in database
-
-        User updatedUser = new User("nonexistent-user-id", "2024600876", "Franklin", "Evans", "franklin@example.com", "newPassword");
-
-        // When
-        Optional<UserDTO> updatedUserDTO = userService.updateUser("nonexistent-user-id", updatedUser);
-
-        // Then
-        assertFalse(updatedUserDTO.isPresent());
-    }
-
+    /**
+     * Test updating a user when the email already exists.
+     * Expect the user to not be updated.
+     */
     @Test
     void testUpdateUser_WhenEmailAlreadyExists() {
-        // Given
         User existingUser1 = new User("userId1", "2024600871", "John", "Doe", "john@doe.com", "password");
         userRepository.save(existingUser1);
 
@@ -210,10 +211,21 @@ public class UserServiceTest {
 
         User updatedUser = new User("userId3", "2024600873", "Alice", "Smith", "jane@doe.com", "newPassword");
 
-        // When
         Optional<UserDTO> updatedUserDTO = userService.updateUser("userId3", updatedUser);
 
-        // Then
-        assertFalse(updatedUserDTO.isPresent()); // Expecting empty optional because email is already taken
+        assertFalse(updatedUserDTO.isPresent());
+    }
+
+    /**
+     * Test updating a user when the user is not found.
+     * Expect an empty optional.
+     */
+    @Test
+    void testUpdateUser_WhenUserNotFound() {
+        User updatedUser = new User("nonexistent-user-id", "2024600876", "Franklin", "Evans", "franklin@example.com", "newPassword");
+
+        Optional<UserDTO> updatedUserDTO = userService.updateUser("nonexistent-user-id", updatedUser);
+
+        assertFalse(updatedUserDTO.isPresent());
     }
 }

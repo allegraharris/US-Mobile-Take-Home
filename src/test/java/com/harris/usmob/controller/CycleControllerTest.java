@@ -1,9 +1,9 @@
 package com.harris.usmob.controller;
 
+import com.fasterxml.jackson.databind.ObjectMapper;
 import com.harris.usmob.dto.CycleDTO;
 import com.harris.usmob.entity.Cycle;
 import com.harris.usmob.service.CycleService;
-import com.fasterxml.jackson.databind.ObjectMapper;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.mockito.Mockito;
@@ -18,11 +18,24 @@ import java.util.Date;
 
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.anyString;
-import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.*;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.*;
 
+/**
+ * Unit tests for the CycleController class.
+ */
 @WebMvcTest(CycleController.class)
 public class CycleControllerTest {
+
+    private static final String BASE_URL = "/api/cycle";
+
+    @MockBean
+    private CycleService cycleService;
+
+    private Cycle mockCycle;
+
+    private CycleDTO mockCycleDTO;
 
     @Autowired
     private MockMvc mockMvc;
@@ -30,14 +43,9 @@ public class CycleControllerTest {
     @Autowired
     private ObjectMapper objectMapper;
 
-    @MockBean
-    private CycleService cycleService;
-
-    private static final String BASE_URL = "/api/cycle";
-
-    private Cycle mockCycle;
-    private CycleDTO mockCycleDTO;
-
+    /**
+     * Set up mock objects for each test.
+     */
     @BeforeEach
     public void setup() {
         Date startDate = new Date();
@@ -46,6 +54,11 @@ public class CycleControllerTest {
         mockCycleDTO = new CycleDTO("cycleId", startDate, endDate);
     }
 
+    /**
+     * Test adding a cycle.
+     * Expect a 201 status code and the cycle details.
+     * @throws Exception if an error occurs
+     */
     @Test
     public void testAddCycle() throws Exception {
         Mockito.when(cycleService.addCycle(any(Cycle.class))).thenReturn(mockCycleDTO);
@@ -59,6 +72,11 @@ public class CycleControllerTest {
                 .andExpect(jsonPath("$.endDate").value(mockCycleDTO.getEndDate()));
     }
 
+    /**
+     * Test adding a cycle when a cycle already exists.
+     * Expect a 409 status code and an error message.
+     * @throws Exception if an error occurs
+     */
     @Test
     public void testAddCycleConflict() throws Exception {
         Mockito.when(cycleService.addCycle(any(Cycle.class))).thenReturn(null);
@@ -70,6 +88,11 @@ public class CycleControllerTest {
                 .andExpect(content().string("Error adding cycle"));
     }
 
+    /**
+     * Test deleting a cycle.
+     * Expect a 200 status code and a success message.
+     * @throws Exception if an error occurs
+     */
     @Test
     public void testDeleteCycle() throws Exception {
         Mockito.when(cycleService.deleteCycle(anyString())).thenReturn(true);
@@ -79,6 +102,11 @@ public class CycleControllerTest {
                 .andExpect(content().string("Cycle deleted successfully."));
     }
 
+    /**
+     * Test deleting a cycle when the cycle does not exist.
+     * Expect a 404 status code and an error message.
+     * @throws Exception if an error occurs
+     */
     @Test
     public void testDeleteCycleNotFound() throws Exception {
         Mockito.when(cycleService.deleteCycle(anyString())).thenReturn(false);
@@ -88,6 +116,11 @@ public class CycleControllerTest {
                 .andExpect(content().string("Cycle does not exist."));
     }
 
+    /**
+     * Test getting all cycles.
+     * Expect a 200 status code and the list of cycles.
+     * @throws Exception if an error occurs
+     */
     @Test
     public void testGetAllCycles() throws Exception {
         Mockito.when(cycleService.getAllCycles()).thenReturn(Collections.singletonList(mockCycleDTO));
@@ -99,6 +132,11 @@ public class CycleControllerTest {
                 .andExpect(jsonPath("$[0].endDate").value(mockCycleDTO.getEndDate()));
     }
 
+    /**
+     * Test getting all cycles when no cycles exist.
+     * Expect a 404 status code and an error message.
+     * @throws Exception if an error occurs
+     */
     @Test
     public void testGetAllCyclesNotFound() throws Exception {
         Mockito.when(cycleService.getAllCycles()).thenReturn(Collections.emptyList());
@@ -108,6 +146,11 @@ public class CycleControllerTest {
                 .andExpect(content().string("No cycles found."));
     }
 
+    /**
+     * Test getting the cycle history for a user.
+     * Expect a 200 status code and the list of cycles.
+     * @throws Exception if an error occurs
+     */
     @Test
     public void testGetCycleHistory() throws Exception {
         Mockito.when(cycleService.getCycleHistory(anyString(), anyString())).thenReturn(Collections.singletonList(mockCycleDTO));
@@ -119,6 +162,11 @@ public class CycleControllerTest {
                 .andExpect(jsonPath("$[0].endDate").value(mockCycleDTO.getEndDate()));
     }
 
+    /**
+     * Test getting the cycle history for a user when no cycles exist.
+     * Expect a 404 status code and an error message.
+     * @throws Exception if an error occurs
+     */
     @Test
     public void testGetCycleHistoryNotFound() throws Exception {
         Mockito.when(cycleService.getCycleHistory(anyString(), anyString())).thenReturn(Collections.emptyList());

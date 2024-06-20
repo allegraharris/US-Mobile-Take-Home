@@ -42,6 +42,23 @@ public class DailyUsageController {
         return new ResponseEntity<>(d, HttpStatus.CREATED);
     }
 
+    @Operation(summary = "Delete a daily usage")
+    @ApiResponses(value = {
+            @ApiResponse(responseCode = "200", description = "Daily usage deleted successfully",
+                    content = @Content),
+            @ApiResponse(responseCode = "404", description = "Error deleting daily usage",
+                    content = @Content)
+    })
+    @DeleteMapping("/delete/{usageId}")
+    public ResponseEntity<Object> deleteDailyUsage(@PathVariable String usageId) {
+        Boolean b = dailyUsageService.deleteDailyUsage(usageId);
+
+        if (!b) {
+            return new ResponseEntity<>("Daily usage does not exist.", HttpStatus.NOT_FOUND);
+        }
+        return new ResponseEntity<>("Daily usage deleted successfully.", HttpStatus.OK);
+    }
+
     @Operation(summary = "Get all daily usage stored in the collection")
     @ApiResponses(value = {
             @ApiResponse(responseCode = "200", description = "Daily usage found successfully",
@@ -80,21 +97,6 @@ public class DailyUsageController {
         }
 
         return new ResponseEntity<>(dailyUsageHistory, HttpStatus.OK);
-    }
-
-    @Operation(summary = "Delete a daily usage")
-    @ApiResponses(value = {
-            @ApiResponse(responseCode = "200", description = "Daily usage deleted successfully",
-                    content = @Content),
-            @ApiResponse(responseCode = "404", description = "Error deleting daily usage",
-                    content = @Content)
-    })
-    @DeleteMapping("/delete/{usageId}")
-    public ResponseEntity<Object> deleteDailyUsage(@PathVariable String usageId) {
-        Boolean b = dailyUsageService.deleteDailyUsage(usageId);
-
-        if (!b) { return new ResponseEntity<>("Daily usage does not exist.", HttpStatus.NOT_FOUND); }
-        return new ResponseEntity<>("Daily usage deleted successfully.", HttpStatus.OK);
     }
 
     @Operation(summary = "Update the daily usage in MB")

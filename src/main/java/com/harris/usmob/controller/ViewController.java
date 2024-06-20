@@ -99,6 +99,17 @@ public class ViewController {
         return "forward:/dailyUsageHistory.html";
     }
 
+    @Operation(summary = "Delete cycle page")
+    @ApiResponses(value = {
+            @ApiResponse(responseCode = "200", description = "Delete cycle page",
+                    content = {@Content(mediaType = "text/html",
+                            schema = @Schema(implementation = String.class))})
+    })
+    @GetMapping("/cycle/delete")
+    public String deleteCycle() {
+        return "forward:/deleteCycle.html";
+    }
+
     @Operation(summary = "Delete user page")
     @ApiResponses(value = {
             @ApiResponse(responseCode = "200", description = "Delete user page",
@@ -132,28 +143,6 @@ public class ViewController {
         return "forward:/searchByEmail.html";
     }
 
-    @Operation(summary = "Update user page")
-    @ApiResponses(value = {
-            @ApiResponse(responseCode = "200", description = "Update user page",
-                    content = {@Content(mediaType = "text/html",
-                            schema = @Schema(implementation = String.class))})
-    })
-    @GetMapping("/user/update")
-    public String updateUser() {
-        return "forward:/updateUser.html";
-    }
-
-    @Operation(summary = "Delete cycle page")
-    @ApiResponses(value = {
-            @ApiResponse(responseCode = "200", description = "Delete cycle page",
-                    content = {@Content(mediaType = "text/html",
-                            schema = @Schema(implementation = String.class))})
-    })
-    @GetMapping("/cycle/delete")
-    public String deleteCycle() {
-        return "forward:/deleteCycle.html";
-    }
-
     @Operation(summary = "Transfer MDN page")
     @ApiResponses(value = {
             @ApiResponse(responseCode = "200", description = "Transfer MDN page",
@@ -174,5 +163,16 @@ public class ViewController {
     @GetMapping("/daily-usage/update")
     public String updateDailyUsage() {
         return "forward:/updateUsedInMb.html";
+    }
+
+    @Operation(summary = "Update user page")
+    @ApiResponses(value = {
+            @ApiResponse(responseCode = "200", description = "Update user page",
+                    content = {@Content(mediaType = "text/html",
+                            schema = @Schema(implementation = String.class))})
+    })
+    @GetMapping("/user/update")
+    public String updateUser() {
+        return "forward:/updateUser.html";
     }
 }

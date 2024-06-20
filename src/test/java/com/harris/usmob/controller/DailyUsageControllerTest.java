@@ -20,6 +20,9 @@ import static org.mockito.ArgumentMatchers.*;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.*;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.*;
 
+/**
+ * Unit tests for the DailyUsageController class.
+ */
 @WebMvcTest(DailyUsageController.class)
 public class DailyUsageControllerTest {
 
@@ -35,8 +38,12 @@ public class DailyUsageControllerTest {
     private static final String BASE_URL = "/api/daily-usage";
 
     private DailyUsage mockDailyUsage;
+
     private DailyUsageDTO mockDailyUsageDTO;
 
+    /**
+     * Set up mock objects for each test.
+     */
     @BeforeEach
     public void setup() {
         Date usageDate = new Date();
@@ -44,6 +51,11 @@ public class DailyUsageControllerTest {
         mockDailyUsageDTO = new DailyUsageDTO(usageDate, 500);
     }
 
+    /**
+     * Test adding a daily usage.
+     * Expect a 201 status code and the daily usage details.
+     * @throws Exception if an error occurs
+     */
     @Test
     public void testAddDailyUsage() throws Exception {
         Mockito.when(dailyUsageService.addDailyUsage(any(DailyUsage.class))).thenReturn(mockDailyUsageDTO);
@@ -56,6 +68,11 @@ public class DailyUsageControllerTest {
                 .andExpect(jsonPath("$.usedInMb").value(mockDailyUsageDTO.getUsedInMb()));
     }
 
+    /**
+     * Test adding a daily usage when a conflict occurs.
+     * Expect a 409 status code and an error message.
+     * @throws Exception if an error occurs
+     */
     @Test
     public void testAddDailyUsageConflict() throws Exception {
         Mockito.when(dailyUsageService.addDailyUsage(any(DailyUsage.class))).thenReturn(null);
@@ -67,6 +84,11 @@ public class DailyUsageControllerTest {
                 .andExpect(content().string("Error adding daily usage"));
     }
 
+    /**
+     * Test getting all daily usages.
+     * Expect a 200 status code and the daily usage details.
+     * @throws Exception if an error occurs
+     */
     @Test
     public void testGetAllDailyUsages() throws Exception {
         Mockito.when(dailyUsageService.getAllDailyUsages()).thenReturn(Collections.singletonList(mockDailyUsageDTO));
@@ -77,6 +99,11 @@ public class DailyUsageControllerTest {
                 .andExpect(jsonPath("$[0].usedInMb").value(mockDailyUsageDTO.getUsedInMb()));
     }
 
+    /**
+     * Test getting all daily usages when none are found.
+     * Expect a 404 status code and an error message.
+     * @throws Exception if an error occurs
+     */
     @Test
     public void testGetAllDailyUsagesNotFound() throws Exception {
         Mockito.when(dailyUsageService.getAllDailyUsages()).thenReturn(Collections.emptyList());
@@ -86,6 +113,11 @@ public class DailyUsageControllerTest {
                 .andExpect(content().string("No daily usages found."));
     }
 
+    /**
+     * Test getting daily usage history.
+     * Expect a 200 status code and the daily usage history.
+     * @throws Exception if an error occurs
+     */
     @Test
     public void testGetDailyUsageHistory() throws Exception {
         Mockito.when(dailyUsageService.getDailyUsageHistory(anyString(), anyString()))
@@ -97,6 +129,11 @@ public class DailyUsageControllerTest {
                 .andExpect(jsonPath("$[0].usedInMb").value(mockDailyUsageDTO.getUsedInMb()));
     }
 
+    /**
+     * Test getting daily usage history when none is found.
+     * Expect a 404 status code and an error message.
+     * @throws Exception if an error occurs
+     */
     @Test
     public void testGetDailyUsageHistoryNotFound() throws Exception {
         Mockito.when(dailyUsageService.getDailyUsageHistory(anyString(), anyString()))
@@ -107,6 +144,11 @@ public class DailyUsageControllerTest {
                 .andExpect(content().string("No daily usage history found."));
     }
 
+    /**
+     * Test deleting a daily usage.
+     * Expect a 200 status code and a success message.
+     * @throws Exception if an error occurs
+     */
     @Test
     public void testDeleteDailyUsage() throws Exception {
         Mockito.when(dailyUsageService.deleteDailyUsage(anyString())).thenReturn(true);
@@ -116,6 +158,11 @@ public class DailyUsageControllerTest {
                 .andExpect(content().string("Daily usage deleted successfully."));
     }
 
+    /**
+     * Test deleting a daily usage when the daily usage does not exist.
+     * Expect a 404 status code and an error message.
+     * @throws Exception if an error occurs
+     */
     @Test
     public void testDeleteDailyUsageNotFound() throws Exception {
         Mockito.when(dailyUsageService.deleteDailyUsage(anyString())).thenReturn(false);
@@ -125,6 +172,11 @@ public class DailyUsageControllerTest {
                 .andExpect(content().string("Daily usage does not exist."));
     }
 
+    /**
+     * Test updating the used in Mb for a daily usage.
+     * Expect a 200 status code and the updated daily usage details.
+     * @throws Exception if an error occurs
+     */
     @Test
     public void testUpdateUsedInMb() throws Exception {
         DailyUsageDTO mockDailyUsageDTOUpdated = new DailyUsageDTO(mockDailyUsage.getUsageDate(), 1000);
@@ -139,6 +191,11 @@ public class DailyUsageControllerTest {
                 .andExpect(jsonPath("$.usedInMb").value(1000));
     }
 
+    /**
+     * Test updating the used in Mb for a daily usage when the daily usage is not found.
+     * Expect a 404 status code and an error message.
+     * @throws Exception if an error occurs
+     */
     @Test
     public void testUpdateUsedInMbNotFound() throws Exception {
         Mockito.when(dailyUsageService.updateUsedInMb(any(), anyString(), anyInt())).thenReturn(null);

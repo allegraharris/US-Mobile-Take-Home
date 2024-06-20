@@ -16,13 +16,6 @@ public interface CycleRepository extends MongoRepository<Cycle, String> {
     void deleteByUserId(String userId);
 
     /**
-     * Find by User ID
-     * @param userId User ID
-     * @return List of Cycle objects
-     */
-    List<Cycle> findByUserId(String userId);
-
-    /**
      * Find by User ID and MDN
      * @param userId User ID
      * @param mdn MDN

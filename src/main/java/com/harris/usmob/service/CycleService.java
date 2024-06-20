@@ -29,6 +29,7 @@ public class CycleService {
 
     /**
      * Adds a new cycle to the collection
+     *
      * @param cycle Cycle
      * @return CycleDTO object
      */
@@ -39,7 +40,7 @@ public class CycleService {
         User user = userRepository.findById(userId).orElse(null);
 
         //Foreign key error or mdn mismatch
-        if(user == null || !Objects.equals(user.getMdn(), mdn)) {
+        if (user == null || !Objects.equals(user.getMdn(), mdn)) {
             return null;
         }
 
@@ -74,6 +75,7 @@ public class CycleService {
 
     /**
      * Check if Date 1 is after or equals Date 2
+     *
      * @param date1 Date 1
      * @param date2 Date 2
      * @return Boolean
@@ -84,6 +86,7 @@ public class CycleService {
 
     /**
      * Check if Date 1 is before or equals Date 2
+     *
      * @param date1 Date 1
      * @param date2 Date 2
      * @return Boolean
@@ -94,6 +97,7 @@ public class CycleService {
 
     /**
      * Deletes a cycle from the collection
+     *
      * @param cycleId Cycle ID
      * @return Boolean
      */
@@ -110,6 +114,7 @@ public class CycleService {
 
     /**
      * Get All Cycles
+     *
      * @return List of CycleDTO objects
      */
     public List<CycleDTO> getAllCycles() {
@@ -121,8 +126,9 @@ public class CycleService {
 
     /**
      * Gets the cycle history for a user and MDN
+     *
      * @param userId User ID
-     * @param mdn MDN
+     * @param mdn    MDN
      * @return List of CycleDTO objects
      */
     public List<CycleDTO> getCycleHistory(String userId, String mdn) {
@@ -134,11 +140,11 @@ public class CycleService {
 
     /**
      * Gets Most Recent Cycle dates for a user and MDN
-     *
+     * <p>
      * Helper method for getDailyUsageHistory
      *
      * @param userId User ID
-     * @param mdn MDN
+     * @param mdn    MDN
      * @return List of Date objects
      */
     public List<Date> getMostRecentCycle(String userId, String mdn) {

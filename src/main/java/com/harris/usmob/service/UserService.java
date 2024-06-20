@@ -34,6 +34,7 @@ public class UserService {
 
     /**
      * Creates a new user in the collection
+     *
      * @param user User
      * @return UserDTO object
      */
@@ -47,6 +48,7 @@ public class UserService {
 
     /**
      * Deletes a user from the collection
+     *
      * @param id User ID
      * @return Boolean
      */
@@ -67,7 +69,36 @@ public class UserService {
     }
 
     /**
+     * Gets All Users
+     *
+     * @return List of UserDTO objects
+     */
+    public List<UserDTO> getAllUsers() {
+        List<User> allUsers = userRepository.findAll();
+
+        return allUsers.stream()
+                .map(user -> new UserDTO(user.getId(), user.getMdn(), user.getFirstName(), user.getLastName(), user.getEmail()))
+                .collect(Collectors.toList());
+    }
+
+    /**
+     * Gets a User By Email
+     *
+     * @param email User email
+     * @return UserDTO object
+     */
+    public Optional<UserDTO> getUserByEmail(String email) {
+        User user = userRepository.findByEmail(email);
+
+        if (user == null) {
+            return Optional.empty();
+        }
+        return Optional.of(new UserDTO(user.getId(), user.getMdn(), user.getFirstName(), user.getLastName(), user.getEmail()));
+    }
+
+    /**
      * Transfers MDN from User B to User A
+     *
      * @param userIdA User ID A
      * @param userIdB User ID B
      * @return List of UserDTO objects
@@ -92,35 +123,10 @@ public class UserService {
     }
 
     /**
-     * Gets All Users
-     * @return List of UserDTO objects
-     */
-    public List<UserDTO> getAllUsers() {
-        List<User> allUsers = userRepository.findAll();
-
-        return allUsers.stream()
-                .map(user -> new UserDTO(user.getId(), user.getMdn(), user.getFirstName(), user.getLastName(), user.getEmail()))
-                .collect(Collectors.toList());
-    }
-
-    /**
-     * Gets a User By Email
-     * @param email User email
-     * @return UserDTO object
-     */
-    public Optional<UserDTO> getUserByEmail(String email) {
-        User user = userRepository.findByEmail(email);
-
-        if (user == null) {
-            return Optional.empty();
-        }
-        return Optional.of(new UserDTO(user.getId(), user.getMdn(), user.getFirstName(), user.getLastName(), user.getEmail()));
-    }
-
-    /**
      * Updates a User
+     *
      * @param userId User ID
-     * @param user User
+     * @param user   User
      * @return UserDTO object
      */
     public Optional<UserDTO> updateUser(String userId, User user) {
